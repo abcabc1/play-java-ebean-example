@@ -1,4 +1,4 @@
-package models;
+package models.computer;
 
 import play.data.format.Formats;
 import play.data.validation.Constraints;

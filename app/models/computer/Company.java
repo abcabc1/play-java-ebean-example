@@ -1,5 +1,6 @@
-package models;
+package models.computer;
 
+import models.computer.BaseModel;
 import play.data.validation.Constraints;
 
 import javax.persistence.Entity;

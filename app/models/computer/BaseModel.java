@@ -1,4 +1,4 @@
-package models;
+package models.computer;
 
 import io.ebean.Model;
 
