@@ -1,7 +1,7 @@
 package repository;
 
 import io.ebean.*;
-import models.Computer;
+import models.computer.Computer;
 import play.db.ebean.EbeanConfig;
 
 import javax.inject.Inject;

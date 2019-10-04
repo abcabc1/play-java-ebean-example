@@ -1,6 +1,6 @@
 package controllers;
 
-import models.Computer;
+import models.computer.Computer;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.MessagesApi;

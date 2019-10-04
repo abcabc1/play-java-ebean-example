@@ -3,7 +3,11 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import play.mvc.Result;
 import play.test.WithApplication;
+import utils.Constant;
+import utils.string.HtmlUtil;
+import utils.string.StringUtil;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,4 +76,13 @@ public class FunctionalTest extends WithApplication {
         assertThat(contentAsString(result)).contains("One computer found");
     }
 
+    @Test
+    public void extractHtmlFile() {
+        String path = "";
+        if (Constant.applicationPath == null || Constant.applicationPath.isEmpty() || Constant.applicationPath.equalsIgnoreCase(".")) {
+            path = "/Users/yibozheng/project/play/examples/play-java-ebean-example/public";
+        }
+        File file = new File(path + "/test.html");
+        HtmlUtil.extractFile(file);
+    }
 }
