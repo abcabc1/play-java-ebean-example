@@ -52,48 +52,18 @@ BEGIN
   EXECUTE stmt;
 END
 $$
-create table word (
-  code                          varchar(32) COMMENT '编码' not null,
-  status                        tinyint DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
+create table operator (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        tinyint DEFAULT 1 COMMENT '数据是否有效 0 无效/1 有效' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  letter                        varchar(255),
-  constraint pk_word primary key (code)
+  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  constraint uq_operator_code unique (code),
+  constraint pk_operator primary key (id)
 );
-
-create table word_sentence (
-  code                          varchar(255) not null,
-  type                          varchar(255) not null,
-  sentence                      varchar(255) not null,
-  status                        tinyint DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  translation                   varchar(255),
-  constraint pk_word_sentence primary key (code,type,sentence)
-);
-
-create table word_trans (
-  code                          varchar(255) not null,
-  type                          varchar(255) not null,
-  status                        tinyint DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  translation                   varchar(255),
-  constraint pk_word_trans primary key (code,type)
-);
-
-create index ix_word_trans_code on word_trans (code);
-alter table word_trans add constraint fk_word_trans_code foreign key (code) references word (code) on delete restrict on update restrict;
 
 
 # --- !Downs
 
-alter table word_trans drop foreign key fk_word_trans_code;
-drop index ix_word_trans_code on word_trans;
-
-drop table if exists word;
-
-drop table if exists word_sentence;
-
-drop table if exists word_trans;
+drop table if exists operator;
 

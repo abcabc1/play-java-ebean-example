@@ -1,4 +1,4 @@
-@import models.computer.Computer
+@import models.example.Computer
 @(currentPage: io.ebean.PagedList[Computer],
     currentSortBy: String,
     currentOrder: String,
@@ -28,7 +28,7 @@
   }
 
   // Generate the link
-  routes.HomeController.list(newPage, sortBy, order, currentFilter)
+  controllers.example.routes.MainController.list(newPage, sortBy, order, currentFilter)
 
 }
 
@@ -72,7 +72,7 @@
       </form>
     </div>
     <div class="col-sm-6">
-      <a href="@routes.HomeController.create()" id="add" class="btn btn-success float-right" role="button"1>Add a new computer</a>
+      <a href="@controllers.example.routes.MainController.create()" id="add" class="btn btn-success float-right" role="button"1>Add a new computer</a>
     </div>
   </div>
 
@@ -97,7 +97,7 @@
 
       @for(computer <- currentPage.getList.asScala) {
         <tr>
-          <td><a href="@routes.HomeController.edit(computer.id)">@computer.name</a></td>
+          <td><a href="@controllers.example.routes.MainController.edit(computer.id)">@computer.name</a></td>
           <td>
           @if(computer.introduced == null) {
             <em>-</em>

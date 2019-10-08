@@ -1,20 +1,25 @@
 package models.words;
 
 import io.ebean.Finder;
-import models.base.BasicCodeModel;
+import models.base.BasicSimpleModel;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table
-public class Word extends BasicCodeModel {
+public class WordTrans extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
-    public String letter;
+    @EmbeddedId
+    public WordPK pk;
 
-    public static final Finder<String, Word> find = new Finder<>(Word.class, "words");
+    @ManyToOne
+    @JoinColumn(name = "code")
+    public Word word;
+    public String translation;
+
+    public static final Finder<WordPK, WordTrans> find = new Finder<>(WordTrans.class, "words");
 /*
     @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '配置名称'")
     public String configName;

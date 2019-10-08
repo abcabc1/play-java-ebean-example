@@ -2,12 +2,9 @@ package utils.bsh;
 
 import bsh.EvalError;
 import bsh.Interpreter;
-import models.iplay.account.Operator;
-import models.iplay.account.Role;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Optional;
 
 public class Test {
 
@@ -33,20 +30,20 @@ public class Test {
         System.out.println(i.get("bar"));
     }
 
-    public void calculate(Operator operator) throws EvalError, IOException {
+    /*public void calculate(Operator operator) throws EvalError, IOException {
         Interpreter i = new Interpreter();
-        i.set("operator", operator);
+//        i.set("operator", operator);
 //        String f = "rtn=operator.id.toString()+operator.status.toString()";
 //        i.eval(f);
         i.source("app/utils/bsh/calculate.bsh");
         System.out.println(i.get("rtn"));
-    }
+    }*/
 
-    public void testNull() {
+    /*public void testNull() {
         Role role = null;
 //        role.roleName = "role";
         System.out.println(Optional.ofNullable(role).flatMap(v -> Optional.ofNullable(v.roleName)));
-    }
+    }*/
 
     public static void main(String[] args) throws IOException, EvalError {
         Test test = new Test();
@@ -54,6 +51,6 @@ public class Test {
 //        operator.id = 2L;
 //        operator.status = true;
 //        test.calculate(operator);
-        test.testNull();
+//        test.testNull();
     }
 }

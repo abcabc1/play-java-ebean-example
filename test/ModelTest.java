@@ -1,5 +1,5 @@
 import io.ebean.PagedList;
-import models.computer.Computer;
+import models.example.Computer;
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;

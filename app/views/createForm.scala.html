@@ -1,4 +1,4 @@
-@import models.computer.Computer
+@import models.example.Computer
 @(computerForm: Form[Computer], companies: Map[String, String])(implicit request: Http.Request, messages: play.i18n.Messages)
 
 @import helper._
@@ -9,7 +9,7 @@
 
     <h1 class="my-3" id="page-title">Add a computer</h1>
 
-    @form(routes.HomeController.save()) {
+    @form(controllers.example.routes.MainController.save()) {
 
         @CSRF.formField
         <div class="row">
@@ -42,7 +42,7 @@
         <div class="actions">
             <button class="btn btn-success" type="submit">Create this computer</button>
             <span class="mx-2">or</span>
-            <a href="@routes.HomeController.list()" id="add" class="btn btn-light" role="button">Cancel</a>
+            <a href="@controllers.example.routes.MainController.list()" id="add" class="btn btn-light" role="button">Cancel</a>
         </div>
     }
 

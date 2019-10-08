@@ -4,8 +4,7 @@ import org.junit.runners.MethodSorters;
 import play.mvc.Result;
 import play.test.WithApplication;
 import utils.Constant;
-import utils.string.HtmlUtil;
-import utils.string.StringUtil;
+import utils.html.HtmlUtil;
 
 import java.io.File;
 import java.util.HashMap;
@@ -21,7 +20,7 @@ public class FunctionalTest extends WithApplication {
 
     @Test
     public void redirectHomePage() {
-        Result result = route(app, controllers.routes.HomeController.index());
+        Result result = route(app, controllers.example.routes.MainController.index());
 
         assertThat(result.status()).isEqualTo(SEE_OTHER);
         assertThat(result.redirectLocation().get()).isEqualTo("/computers");
@@ -29,7 +28,7 @@ public class FunctionalTest extends WithApplication {
 
     @Test
     public void listComputersOnTheFirstPage() {
-        Result result = route(app, controllers.routes.HomeController.list(0, "name", "asc", ""));
+        Result result = route(app, controllers.example.routes.MainController.list(0, "name", "asc", ""));
 
         assertThat(result.status()).isEqualTo(OK);
         assertThat(contentAsString(result)).contains("574 computers found");
@@ -37,7 +36,7 @@ public class FunctionalTest extends WithApplication {
 
     @Test
     public void filterComputerByName() {
-        Result result = route(app, controllers.routes.HomeController.list(0, "name", "asc", "Apple"));
+        Result result = route(app, controllers.example.routes.MainController.list(0, "name", "asc", "Apple"));
 
         assertThat(result.status()).isEqualTo(OK);
         assertThat(contentAsString(result)).contains("13 computers found");
@@ -45,7 +44,7 @@ public class FunctionalTest extends WithApplication {
 
     @Test
     public void createANewComputer() {
-        Result result = route(app, addCSRFToken(fakeRequest().uri(controllers.routes.HomeController.save().url())));
+        Result result = route(app, addCSRFToken(fakeRequest().uri(controllers.example.routes.MainController.save().url())));
         assertThat(result.status()).isEqualTo(OK);
 
         Map<String, String> data = new HashMap<>();
@@ -53,7 +52,7 @@ public class FunctionalTest extends WithApplication {
         data.put("introduced", "badbadbad");
         data.put("company.id", "1");
 
-        String saveUrl = controllers.routes.HomeController.save().url();
+        String saveUrl = controllers.example.routes.MainController.save().url();
         result = route(app, addCSRFToken(fakeRequest().bodyForm(data).method("POST").uri(saveUrl)));
 
         assertThat(result.status()).isEqualTo(BAD_REQUEST);
@@ -71,18 +70,14 @@ public class FunctionalTest extends WithApplication {
         assertThat(result.redirectLocation().get()).isEqualTo("/computers");
         assertThat(result.flash().getOptional("success").get()).isEqualTo("Computer FooBar has been created");
 
-        result = route(app, controllers.routes.HomeController.list(0, "name", "asc", "FooBar"));
+        result = route(app, controllers.example.routes.MainController.list(0, "name", "asc", "FooBar"));
         assertThat(result.status()).isEqualTo(OK);
         assertThat(contentAsString(result)).contains("One computer found");
     }
 
     @Test
     public void extractHtmlFile() {
-        String path = "";
-        if (Constant.applicationPath == null || Constant.applicationPath.isEmpty() || Constant.applicationPath.equalsIgnoreCase(".")) {
-            path = "/Users/yibozheng/project/play/examples/play-java-ebean-example/public";
-        }
-        File file = new File(path + "/test.html");
-        HtmlUtil.extractFile(file);
+        String path = "/Users/yibozheng/project/play/examples/play-java-ebean-example/public/test.html";
+        HtmlUtil.extractFile(path);
     }
 }

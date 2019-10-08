@@ -3,30 +3,24 @@
 # ~~~~
 
 # Default path will just redirect to the computer list
-GET         /computers/main              controllers.HomeController.index()
+GET         /computers/main              controllers.example.MainController.index()
 
 # Computers list (look at the default values for pagination parameters)
-GET         /computers                   controllers.HomeController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET         /computers                   controllers.example.MainController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 
 # Add computer
-GET         /computers/new               controllers.HomeController.create(request: Request)
-POST        /computers                   controllers.HomeController.save(request: Request)
+GET         /computers/new               controllers.example.MainController.create(request: Request)
+POST        /computers                   controllers.example.MainController.save(request: Request)
 
 # Edit existing computer
-GET         /computers/:id               controllers.HomeController.edit(request: Request, id:Long)
-POST        /computers/:id               controllers.HomeController.update(request: Request, id:Long)
+GET         /computers/:id               controllers.example.MainController.edit(request: Request, id:Long)
+POST        /computers/:id               controllers.example.MainController.update(request: Request, id:Long)
 
 # Delete a computer
-POST        /computers/:id/delete        controllers.HomeController.delete(id:Long)
+POST        /computers/:id/delete        controllers.example.MainController.delete(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                controllers.Assets.at(path="/public", file)
 
-POST        /words/list                  controllers.words.WordEnController.list(request: Request)
-POST        /words/save                  controllers.words.WordEnController.save(request: Request)
-POST        /words/get                   controllers.words.WordEnController.get(request: Request)
-POST        /words/pagedList             controllers.words.WordEnController.pagedList(request: Request)
-POST        /words/remove                controllers.words.WordEnController.remove(request: Request)
-POST        /words/batchSave             controllers.words.WordEnController.batchSave(request: Request)
-POST        /words/loadFromFile          controllers.words.WordEnController.loadFromFile(request: Request)
-GET         /words/query                 controllers.words.WordEnController.query(request: Request, word: String)
+POST        /test/testService            controllers.words.TestController.testService(request: Request)
+POST        /test/dict2Db                controllers.words.TestController.dict2Db(request: Request)

@@ -1,35 +1,35 @@
 package repository;
 
 import io.ebean.*;
-import models.base.BasicCodeModel;
+import models.base.BasicSimpleModel;
+import models.words.WordSentence;
+import models.words.WordTrans;
 import play.db.ebean.EbeanConfig;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.concurrent.CompletionStage;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-
-public abstract class BasicCodeRepository<T extends BasicCodeModel> {
+public abstract class BasicSimpleRepository<T extends BasicSimpleModel> {
 
     protected final EbeanServer ebeanServer;
     protected final DatabaseExecutionContext executionContext;
 
     @Inject
-    public BasicCodeRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext, String serverName) {
+    public BasicSimpleRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext, String serverName) {
         this.ebeanServer = Ebean.getServer(serverName == null ? ebeanConfig.defaultServer() : serverName);
         this.executionContext = executionContext;
     }
 
     @Inject
-    public BasicCodeRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
+    public BasicSimpleRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
         this.ebeanServer = Ebean.getServer(ebeanConfig.defaultServer());
         this.executionContext = executionContext;
     }
 
-    public CompletionStage<Optional<? extends BasicCodeModel>> getAsync(T model) {
+    /*public CompletionStage<Optional<? extends BasicCodeModel>> getAsync(T model) {
         return supplyAsync(() -> get(model), executionContext);
     }
 
@@ -110,16 +110,13 @@ public abstract class BasicCodeRepository<T extends BasicCodeModel> {
         final Optional<? extends BasicCodeModel> modelOptional = Optional.ofNullable(ebeanServer.find(model.getClass()).setId(model.code).findOne());
         modelOptional.ifPresent(Model::delete);
         return modelOptional.map(c -> c.code);
-    }
+    }*/
 
-    public abstract ExpressionList<? extends BasicCodeModel> getExpr(T model);
+    public abstract ExpressionList<? extends BasicSimpleModel> getExpr(T model);
 
-    public ExpressionList<? extends BasicCodeModel> getExpressionList(T model) {
-        ExpressionList<? extends BasicCodeModel> expressionList = ebeanServer.find(model.getClass()).where();
+    public ExpressionList<? extends BasicSimpleModel> getExpressionList(T model) {
+        ExpressionList<? extends BasicSimpleModel> expressionList = ebeanServer.find(model.getClass()).where();
         model.status = Optional.ofNullable(model.status).orElse(true);
-        if (model.code != null) {
-            expressionList.add(Expr.eq("code", model.code));
-        }
         if (model.timeFrom != null && model.timeTo != null) {
             expressionList.add(Expr.between("createTime", model.timeFrom, model.timeTo));
         }
@@ -128,4 +125,15 @@ public abstract class BasicCodeRepository<T extends BasicCodeModel> {
         }
         return expressionList;
     }
+
+    public Integer saveAll(Collection<T> models){
+        Transaction txn = ebeanServer.beginTransaction();
+        Integer num = ebeanServer.saveAll( models, txn);
+        txn.commit();
+        return num;
+    }
+
+    public abstract Optional<T> save(T model);
+
+    public abstract Optional<T> get(T model);
 }

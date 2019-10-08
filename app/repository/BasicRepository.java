@@ -1,10 +1,11 @@
 package repository;
 
 import io.ebean.*;
-import models.base.BaseModel;
+import models.base.BasicModel;
 import play.db.ebean.EbeanConfig;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-public abstract class BasicRepository <T extends BaseModel> {
+public abstract class BasicRepository<T extends BasicModel> {
 
     protected final EbeanServer ebeanServer;
     protected final DatabaseExecutionContext executionContext;
@@ -29,31 +30,19 @@ public abstract class BasicRepository <T extends BaseModel> {
         this.executionContext = executionContext;
     }
 
-    public CompletionStage<Optional<? extends BaseModel>> get(T model) {
-        return supplyAsync(() -> Optional.ofNullable(getModel(model)), executionContext);
+    public CompletionStage<Optional<? extends BasicModel>> getAsync(T model) {
+        return supplyAsync(() -> get(model), executionContext);
     }
 
-    public BaseModel getModel(T model) {
-        return ebeanServer.find(model.getClass()).setId(model.id).findOne();
+    public Optional<? extends BasicModel> get(T model) {
+        return Optional.ofNullable(ebeanServer.find(model.getClass()).setId(model.id).findOne());
     }
 
-    public CompletionStage<Integer> saveBath(List<T> models) {
-        return supplyAsync(() -> {
-            Transaction txn = ebeanServer.beginTransaction();
-            try {
-                for (int i = 0; i < models.size(); i++) {
-                    saveModel(models.get(i));
-                }
-                txn.commit();
-            }
-            finally {
-                txn.end();
-            }
-            return models.size();
-        }, executionContext);
+    public CompletionStage<Optional<T>> saveAsync(T model) {
+        return supplyAsync(() -> save(model), executionContext);
     }
 
-    private Optional<T> saveModel(T model) {
+    private Optional<T> save(T model) {
         Optional<T> rtn = Optional.empty();
         if (model.id == null) {
             model.createTime = new Date();
@@ -61,7 +50,7 @@ public abstract class BasicRepository <T extends BaseModel> {
             ebeanServer.insert(model);
             rtn = Optional.of(model);
         } else {
-            if (getModel(model) != null) {
+            if (get(model) != null) {
                 model.updateTime = new Date();
                 ebeanServer.update(model);
                 rtn = Optional.of(model);
@@ -70,35 +59,66 @@ public abstract class BasicRepository <T extends BaseModel> {
         return rtn;
     }
 
-    public CompletionStage<Optional<T>> save(T model) {
-        return supplyAsync(() -> saveModel(model), executionContext);
+    public CompletionStage<Integer> saveAllAsync(List<T> models) {
+        return supplyAsync(() -> saveAll(models), executionContext);
     }
 
-    public CompletionStage<PagedList<? extends BaseModel>> pagedList(T model, int page, int pageSize, String sortBy) {
-        return supplyAsync(() ->
-                getExpr(model)
-                        .orderBy(sortBy)
-                        .setFirstRow(page * pageSize)
-                        .setMaxRows(pageSize)
-                        .findPagedList(), executionContext);
+    public Integer saveAll(Collection<T> models) {
+        Transaction txn = ebeanServer.beginTransaction();
+        Integer num = ebeanServer.saveAll(models, txn);
+        txn.commit();
+        return num;
     }
 
-    public CompletionStage<List<? extends BaseModel>> list(T model, String sortBy) {
-        return supplyAsync(() -> getExpr(model).orderBy(sortBy).findList(), executionContext);
-    }
-
-    public CompletionStage<Optional<Long>> remove(T model) {
+    public CompletionStage<Integer> saveBathAsync(List<T> models) {
         return supplyAsync(() -> {
-            final Optional<? extends BaseModel> modelOptional = Optional.ofNullable(ebeanServer.find(model.getClass()).setId(model.id).findOne());
-            modelOptional.ifPresent(Model::delete);
-            return modelOptional.map(c -> c.id);
+            Transaction txn = ebeanServer.beginTransaction();
+            try {
+                for (int i = 0; i < models.size(); i++) {
+                    save(models.get(i));
+                }
+                txn.commit();
+            } finally {
+                txn.end();
+            }
+            return models.size();
         }, executionContext);
     }
 
-    public abstract ExpressionList<? extends BaseModel> getExpr(T model) ;
+    public CompletionStage<PagedList<? extends BasicModel>> pagedListAsync(T model, int page, int pageSize, String sortBy) {
+        return supplyAsync(() -> pagedList(model, page, pageSize, sortBy), executionContext);
+    }
 
-    public ExpressionList<? extends BaseModel> getExpressionList(T model) {
-        ExpressionList<? extends BaseModel> expressionList = ebeanServer.find(model.getClass()).where();
+    public PagedList<? extends BasicModel> pagedList(T model, int page, int pageSize, String sortBy) {
+        return getExpr(model)
+                .orderBy(sortBy)
+                .setFirstRow(page * pageSize)
+                .setMaxRows(pageSize)
+                .findPagedList();
+    }
+
+    public CompletionStage<List<? extends BasicModel>> listAsync(T model, String sortBy) {
+        return supplyAsync(() -> list(model, sortBy), executionContext);
+    }
+
+    public List<? extends BasicModel> list(T model, String sortBy) {
+        return getExpr(model).orderBy(sortBy).findList();
+    }
+
+    public CompletionStage<Optional<Long>> removeAsync(T model) {
+        return supplyAsync(() -> remove(model), executionContext);
+    }
+
+    public Optional<Long> remove(T model) {
+        final Optional<? extends BasicModel> modelOptional = Optional.ofNullable(ebeanServer.find(model.getClass()).setId(model.id).findOne());
+        modelOptional.ifPresent(Model::delete);
+        return modelOptional.map(c -> c.id);
+    }
+
+    public abstract ExpressionList<? extends BasicModel> getExpr(T model);
+
+    public ExpressionList<? extends BasicModel> getExpressionList(T model) {
+        ExpressionList<? extends BasicModel> expressionList = ebeanServer.find(model.getClass()).where();
         model.status = Optional.ofNullable(model.status).orElse(true);
         if (model.id != null) {
             expressionList.add(Expr.eq("id", model.id));
