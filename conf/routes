@@ -22,5 +22,8 @@ POST        /computers/:id/delete        controllers.example.MainController.dele
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                controllers.Assets.at(path="/public", file)
 
-POST        /test/testService            controllers.words.TestController.testService(request: Request)
-POST        /test/dict2Db                controllers.words.TestController.dict2Db(request: Request)
+POST        /words/wordsService          controllers.words.WordsController.testService(request: Request)
+# extract word from dict.cn
+POST        /words/dict2Db               controllers.words.WordsController.dict2Db(request: Request)
+# add relation between listen and word
+POST        /words/listen2Word           controllers.words.WordsController.listen2Word(request: Request)

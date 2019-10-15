@@ -15,15 +15,15 @@ public class WordTrans extends BasicSimpleModel {
     public WordPK pk;
 
     @ManyToOne
-    @JoinColumn(name = "code")
+    @JoinColumn(name = "word_en", referencedColumnName = "word_en", insertable = false, updatable = false)
     public Word word;
-    public String translation;
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '单词中文'")
+    public String wordCn;
 
     public static final Finder<WordPK, WordTrans> find = new Finder<>(WordTrans.class, "words");
 /*
-    @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '配置名称'")
-    public String configName;
-    
+
     @ManyToOne
     @JoinColumn(name = "config_code")
     @JsonBackReference

@@ -5,11 +5,10 @@ import play.data.validation.Constraints;
 import javax.persistence.Entity;
 
 
-
 /**
  * Company entity managed by Ebean
  */
-@Entity 
+@Entity
 public class Company extends BaseModel {
 
     private static final long serialVersionUID = 1L;

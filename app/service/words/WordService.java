@@ -1,5 +1,7 @@
 package service.words;
 
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.typesafe.config.Config;
 import models.words.*;
 import org.jsoup.Jsoup;
@@ -7,13 +9,13 @@ import play.cache.AsyncCacheApi;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.HttpExecutionContext;
 import play.libs.ws.WSClient;
-import repository.words.WordRepository;
-import repository.words.WordSentenceRepository;
-import repository.words.WordTransRepository;
+import repository.words.*;
 import utils.html.HtmlUtil;
+import utils.string.StringUtil;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WordService {
 
@@ -25,10 +27,12 @@ public class WordService {
     protected final WordTransRepository wordTransRepository;
     protected final WordRepository wordRepository;
     protected final WordSentenceRepository wordSentenceRepository;
+    protected final WordPyRepository wordPyRepository;
+    protected final ListenRepository listenRepository;
 
     @Inject
     public WordService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
-                       MessagesApi messagesApi, WordRepository wordRepository, WordTransRepository wordTransRepository, WordSentenceRepository wordSentenceRepository) {
+                       MessagesApi messagesApi, WordRepository wordRepository, WordTransRepository wordTransRepository, WordSentenceRepository wordSentenceRepository, WordPyRepository wordPyRepository, ListenRepository listenRepository) {
         this.config = config;
         this.cache = cache;
         this.ws = ws;
@@ -37,24 +41,19 @@ public class WordService {
         this.wordRepository = wordRepository;
         this.wordTransRepository = wordTransRepository;
         this.wordSentenceRepository = wordSentenceRepository;
+        this.wordPyRepository = wordPyRepository;
+        this.listenRepository = listenRepository;
     }
+
 
     public void dict2Db(Word word, String sortBy) {
-        List list = list(word, sortBy);
-        dict(list);
-
+        dict(wordRepository.list(word, sortBy).stream().map(v -> v.wordEn).collect(Collectors.toList()));
     }
 
-    public List list(Word word, String sortBy) {
-        return wordRepository.list(word, sortBy);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void dict(List list) {
+    public void dict(List<String> list) {
         String url = "https://dict.cn/search";
-        for (Object model : list) {
-            String queryWord = ((Word) model).code;
-            ws.url(url).addQueryParameter("q", queryWord).get().thenApply(r -> r.getBody()).thenAccept(v -> analysis(queryWord, v));
+        for (String s : list) {
+            ws.url(url).addQueryParameter("q", s).get().thenApply(r -> r.getBody()).thenAccept(v -> analysis(s, v));
         }
     }
 
@@ -65,11 +64,11 @@ public class WordService {
         for (Map.Entry<String, List<String>> entry : map.entrySet()) {
             WordTrans wordTrans = new WordTrans();
             WordPK wordPK = new WordPK();
-            wordPK.code = word;
+            wordPK.wordEn = word;
             String key = entry.getKey();
-            wordPK.type = key.substring(0, key.indexOf("."));
+            wordPK.wordType = key.substring(0, key.indexOf("."));
             wordTrans.pk = wordPK;
-            wordTrans.translation = key.replaceAll(wordPK.type + ".", "");
+            wordTrans.wordCn = key.replaceAll(wordPK.wordType + ".", "");
             wordTrans.status = true;
             wordTrans.createTime = new Date();
             wordTransList.add(wordTrans);
@@ -77,18 +76,52 @@ public class WordService {
                 String[] values = value.split("<br>");
                 WordSentence wordSentence = new WordSentence();
                 WordSentencePK wordSentencePK = new WordSentencePK();
-                wordSentencePK.code = wordTrans.pk.code;
-                wordSentencePK.type = wordTrans.pk.type;
-                wordSentencePK.sentence = values[0];
+                wordSentencePK.wordEn = wordTrans.pk.wordEn;
+                wordSentencePK.wordType = wordTrans.pk.wordType;
+                wordSentencePK.sentenceEn = values[0];
                 wordSentence.pk = wordSentencePK;
-//                wordSentence.wordTrans = wordTrans;
-                wordSentence.translation = values[1];
+                wordSentence.wordTrans = wordTrans;
+                wordSentence.sentenceCn = values[1];
                 wordSentence.status = true;
                 wordSentence.createTime = new Date();
                 wordSentenceList.add(wordSentence);
             }
         }
         wordTransRepository.saveAll(wordTransList);
-//        wordSentenceRepository.saveAll(wordSentenceList);
+        wordSentenceRepository.saveAll(wordSentenceList);
+    }
+
+    public void checkAndSave(Long listenId, String[] wordEns) {
+        Listen model = new Listen();
+        model.id = listenId;
+        Optional<Listen> listen = listenRepository.get(model);
+        List<String> wordEnList = new ArrayList<>();
+        List<Word> wordList = new ArrayList<>();
+        for (String wordEn : wordEns) {
+            Word word = new Word();
+            word.wordEn = wordEn;
+            if (!wordRepository.get(word).isPresent()) {
+                word.status = true;
+                word.createTime = new Date();
+                word.wordLetter = wordEn.substring(0, 1).toUpperCase();
+                word.source = listen.get().source;
+                wordEnList.add(wordEn);
+                wordList.add(word);
+            }
+        }
+        wordRepository.saveAll(wordList);
+        dict(wordEnList);
+    }
+
+    public void trans2Py(WordPy modelRequest, String sortBy) {
+        List<WordPy> wordPyList = wordPyRepository.list(modelRequest, sortBy);
+        for (WordPy wordPy : wordPyList) {
+            try {
+                wordPy.py = StringUtil.getPy(wordPy.word, " ", PinyinFormat.WITH_TONE_MARK);
+            } catch (PinyinException e) {
+                e.printStackTrace();
+            }
+        }
+        wordPyRepository.saveAll(wordPyList);
     }
 }

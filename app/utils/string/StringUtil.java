@@ -126,7 +126,7 @@ public class StringUtil {
 //        System.out.println(StringUtil.replaceSQL("", ""));
     }
 
-    public static String getPY(String text) throws PinyinException {
-        return PinyinHelper.convertToPinyinString(text, "", PinyinFormat.WITHOUT_TONE);
+    public static String getPy(String text, String separator, PinyinFormat format) throws PinyinException {
+        return PinyinHelper.convertToPinyinString(text, separator, format);
     }
 }

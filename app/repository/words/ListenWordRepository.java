@@ -3,50 +3,47 @@ package repository.words;
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
 import models.base.BasicSimpleModel;
-import models.words.WordSentence;
+import models.words.ListenWord;
 import play.db.ebean.EbeanConfig;
 import repository.DatabaseExecutionContext;
 import repository.base.BasicSimpleRepository;
 
 import javax.inject.Inject;
 
-public class WordSentenceRepository extends BasicSimpleRepository<WordSentence> {
+public class ListenWordRepository extends BasicSimpleRepository<ListenWord> {
 
     @Inject
-    public WordSentenceRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
+    public ListenWordRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
         super(ebeanConfig, executionContext, "words");
     }
 
     @Override
-    public ExpressionList<WordSentence> getExpr(WordSentence model) {
-        ExpressionList<WordSentence> expressionList = getExpressionList(model);
+    public ExpressionList<ListenWord> getExpr(ListenWord model) {
+        ExpressionList<ListenWord> expressionList = getExpressionList(model);
         if (model.pk != null && model.pk.wordEn != null) {
             expressionList.add(Expr.eq("pk.wordEn", model.pk.wordEn));
         }
-        if (model.pk != null && model.pk.wordType != null) {
-            expressionList.add(Expr.eq("pk.wordType", model.pk.wordType));
-        }
-        if (model.pk != null && model.pk.sentenceEn != null) {
-            expressionList.add(Expr.eq("pk.sentenceEn", model.pk.sentenceEn));
+        if (model.pk != null && model.pk.listenId != null) {
+            expressionList.add(Expr.eq("pk.listenId", model.pk.listenId));
         }
         return expressionList;
     }
 
     @Override
-    public boolean isNullKey(WordSentence model) {
-        return model.pk == null || model.pk.wordEn == null || model.pk.wordType == null || model.pk.sentenceEn == null;
+    public boolean isNullKey(ListenWord model) {
+        return model.pk == null || model.pk.wordEn == null || model.pk.listenId == null;
     }
 
     @Override
-    public Object getKey(WordSentence model) {
+    public Object getKey(ListenWord model) {
         return model.pk;
     }
-
+    
 /*
     @Override
-    public CompletionStage<Optional<Menu>> save(WordSentence model) {
+    public CompletionStage<Optional<Menu>> save(ListenWord model) {
         return supplyAsync(() -> {
-            Optional<WordSentence> rtn = Optional.empty();
+            Optional<ListenWord> rtn = Optional.empty();
             if (model.id == null) {
                 model.createTime = new Date();
                 model.status = true;
@@ -54,7 +51,7 @@ public class WordSentenceRepository extends BasicSimpleRepository<WordSentence> 
                 model.save();
                 rtn = Optional.of(model);
             } else {
-                WordSentence modelTemp = (WordSentence) getModel(model);
+                ListenWord modelTemp = (ListenWord) getModel(model);
                 if (modelTemp != null) {
                     model.updateTime = new Date();
                     model.modelCode = modelTemp.modelCode;
@@ -73,14 +70,14 @@ public class WordSentenceRepository extends BasicSimpleRepository<WordSentence> 
         }, executionContext);
     }
 
-    public void shiftParent(WordSentence model) {
+    public void shiftParent(ListenWord model) {
         model.modelOrder = Optional.ofNullable(model.modelOrder).orElse(1);
         if (model.parent == null || model.parent.id == null) {
             model.modelLevel = 1;
             model.modelCodeSeq = model.modelCode;
             model.modelOrderSeq = StringUtil.rounding(model.modelOrder, 3);
         } else {
-            WordSentence parent = (WordSentence) getModel(model.parent);
+            ListenWord parent = (ListenWord) getModel(model.parent);
             if (parent != null) {
                 model.modelLevel = parent.modelLevel + 1;
                 model.modelCodeSeq = parent.modelCodeSeq + "." + model.modelCode;
@@ -89,7 +86,7 @@ public class WordSentenceRepository extends BasicSimpleRepository<WordSentence> 
         }
     }
 
-    public void resetChild(WordSentence modelFrom, WordSentence modelTo, String modelClass) {
+    public void resetChild(ListenWord modelFrom, ListenWord modelTo, String modelClass) {
         System.out.println(modelTo.modelCodeSeq + ":" + modelFrom.modelCodeSeq);
         System.out.println(modelTo.modelLevel + ":" + modelFrom.modelLevel);
         System.out.println(modelTo.modelOrderSeq + ":" + modelFrom.modelOrderSeq);

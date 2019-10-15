@@ -37,12 +37,12 @@ public class ComputerRepository {
     public CompletionStage<PagedList<Computer>> page(int page, int pageSize, String sortBy, String order, String filter) {
         return supplyAsync(() ->
                 ebeanServer.find(Computer.class).where()
-                    .ilike("name", "%" + filter + "%")
-                    .orderBy(sortBy + " " + order)
-                    .fetch("company")
-                    .setFirstRow(page * pageSize)
-                    .setMaxRows(pageSize)
-                    .findPagedList(), executionContext);
+                        .ilike("name", "%" + filter + "%")
+                        .orderBy(sortBy + " " + order)
+                        .fetch("company")
+                        .setFirstRow(page * pageSize)
+                        .setMaxRows(pageSize)
+                        .findPagedList(), executionContext);
     }
 
     public CompletionStage<Optional<Computer>> lookup(Long id) {
@@ -72,7 +72,7 @@ public class ComputerRepository {
         }, executionContext);
     }
 
-    public CompletionStage<Optional<Long>>  delete(Long id) {
+    public CompletionStage<Optional<Long>> delete(Long id) {
         return supplyAsync(() -> {
             try {
                 final Optional<Computer> computerOptional = Optional.ofNullable(ebeanServer.find(Computer.class).setId(id).findOne());
@@ -86,9 +86,9 @@ public class ComputerRepository {
 
     public CompletionStage<Long> insert(Computer computer) {
         return supplyAsync(() -> {
-             computer.id = System.currentTimeMillis(); // not ideal, but it works
-             ebeanServer.insert(computer);
-             return computer.id;
+            computer.id = System.currentTimeMillis(); // not ideal, but it works
+            ebeanServer.insert(computer);
+            return computer.id;
         }, executionContext);
     }
 }

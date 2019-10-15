@@ -7,6 +7,6 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public class BaseModel extends Model {
-   @Id
-   public Long id;
+    @Id
+    public Long id;
 }

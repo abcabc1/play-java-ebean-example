@@ -3,29 +3,25 @@ package models.words;
 import io.ebean.Finder;
 import models.base.BasicSimpleModel;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table
-public class WordSentence extends BasicSimpleModel {
+public class WordPy extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
-    @EmbeddedId
-    public WordSentencePK pk;
+    public static final Finder<Long, WordPy> find = new Finder<>(WordPy.class, "default");
 
-    @ManyToOne
-    @JoinColumns(value = {
-            @JoinColumn(name = "word_en", referencedColumnName = "word_en", insertable = false, updatable = false),
-            @JoinColumn(name = "word_type", referencedColumnName = "word_type", insertable = false, updatable = false)
-    })
-    public WordTrans wordTrans;
+    @Id
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) COMMENT '单词中文'")
+    public String word;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '单词例句中文'")
-    public String sentenceCn;
-
-    public static final Finder<WordSentencePK, WordSentence> find = new Finder<>(WordSentence.class, "words");
-
+    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词拼音'")
+    public String py;
 /*
     @JsonBackReference(value = "operatorPass")
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '111111' COMMENT '密码'")

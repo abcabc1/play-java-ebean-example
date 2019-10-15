@@ -2,15 +2,15 @@ package repository.words;
 
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
-import models.base.BasicCodeModel;
+import models.base.BasicSimpleModel;
 import models.words.Word;
 import play.db.ebean.EbeanConfig;
-import repository.BasicCodeRepository;
 import repository.DatabaseExecutionContext;
+import repository.base.BasicSimpleRepository;
 
 import javax.inject.Inject;
 
-public class WordRepository extends BasicCodeRepository<Word> {
+public class WordRepository extends BasicSimpleRepository<Word> {
 
     @Inject
     public WordRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
@@ -18,14 +18,24 @@ public class WordRepository extends BasicCodeRepository<Word> {
     }
 
     @Override
-    public ExpressionList<? extends BasicCodeModel> getExpr(Word model) {
-        ExpressionList<? extends BasicCodeModel> expressionList = getExpressionList(model);
-        if (model.code != null) {
-            expressionList.add(Expr.eq("code", model.code));
+    public ExpressionList<Word> getExpr(Word model) {
+        ExpressionList<Word> expressionList = getExpressionList(model);
+        if (model.wordEn != null) {
+            expressionList.add(Expr.eq("wordEn", model.wordEn));
         }
-        if (model.letter != null) {
-            expressionList.add(Expr.eq("letter", model.letter));
+        if (model.wordLetter != null) {
+            expressionList.add(Expr.eq("wordLetter", model.wordLetter));
         }
         return expressionList;
+    }
+
+    @Override
+    public boolean isNullKey(Word model) {
+        return model.wordEn == null;
+    }
+
+    @Override
+    public Object getKey(Word model) {
+        return model.wordEn;
     }
 }
