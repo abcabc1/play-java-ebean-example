@@ -3,25 +3,26 @@ package models.words;
 import io.ebean.Finder;
 import models.base.BasicSimpleModel;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table
-public class WordPy extends BasicSimpleModel {
+public class WordChinese extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Finder<Long, WordPy> find = new Finder<>(WordPy.class, "default");
+    public static final Finder<Long, WordChinese> find = new Finder<>(WordChinese.class, "default");
 
     @Id
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) COMMENT '单词中文'")
-    public String word;
+    public String wordCn;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词拼音'")
     public String py;
+
+    @ManyToOne
+    @JoinColumn(name = "source")
+    public Config source;
 /*
     @JsonBackReference(value = "operatorPass")
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '111111' COMMENT '密码'")

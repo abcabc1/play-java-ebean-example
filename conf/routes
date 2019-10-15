@@ -27,3 +27,5 @@ POST        /words/wordsService          controllers.words.WordsController.testS
 POST        /words/dict2Db               controllers.words.WordsController.dict2Db(request: Request)
 # add relation between listen and word
 POST        /words/listen2Word           controllers.words.WordsController.listen2Word(request: Request)
+# make up Chinese word with Pinyin
+POST        /words/trans2Py           controllers.words.WordsController.trans2Py(request: Request)

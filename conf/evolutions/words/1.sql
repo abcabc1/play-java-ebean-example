@@ -52,6 +52,24 @@ BEGIN
   EXECUTE stmt;
 END
 $$
+create table cn_word (
+  word_cn                       varchar(16) COMMENT '单词中文' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  source                        varchar(32) COMMENT '配置编码',
+  constraint pk_cn_word primary key (word_cn)
+);
+
+create table cn_word_py (
+  word_cn                       varchar(16) DEFAULT '' COMMENT '单词英文' not null,
+  word_py                       varchar(16) DEFAULT '' COMMENT '单词类别' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  constraint pk_cn_word_py primary key (word_cn,word_py)
+);
+
 create table config (
   config_code                   varchar(32) COMMENT '配置编码' not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
@@ -110,15 +128,6 @@ create table word (
   constraint pk_word primary key (word_en)
 );
 
-create table word_py (
-  word                          varchar(16) COMMENT '单词中文' not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  py                            varchar(16) DEFAULT '' COMMENT '单词拼音' not null,
-  constraint pk_word_py primary key (word)
-);
-
 create table word_sentence (
   word_en                       varchar(32) DEFAULT '' COMMENT '单词英文' not null,
   word_type                     varchar(16) DEFAULT '' COMMENT '单词类别' not null,
@@ -139,6 +148,12 @@ create table word_trans (
   word_cn                       varchar(64) DEFAULT '' COMMENT '单词中文' not null,
   constraint pk_word_trans primary key (word_en,word_type)
 );
+
+create index ix_cn_word_source on cn_word (source);
+alter table cn_word add constraint fk_cn_word_source foreign key (source) references config (config_code) on delete restrict on update restrict;
+
+create index ix_cn_word_py_word_cn on cn_word_py (word_cn);
+alter table cn_word_py add constraint fk_cn_word_py_word_cn foreign key (word_cn) references cn_word (word_cn) on delete restrict on update restrict;
 
 create index ix_config_parent on config (parent);
 alter table config add constraint fk_config_parent foreign key (parent) references config (config_code) on delete restrict on update restrict;
@@ -167,6 +182,12 @@ alter table word_trans add constraint fk_word_trans_word_en foreign key (word_en
 
 # --- !Downs
 
+alter table cn_word drop foreign key fk_cn_word_source;
+drop index ix_cn_word_source on cn_word;
+
+alter table cn_word_py drop foreign key fk_cn_word_py_word_cn;
+drop index ix_cn_word_py_word_cn on cn_word_py;
+
 alter table config drop foreign key fk_config_parent;
 drop index ix_config_parent on config;
 
@@ -191,6 +212,10 @@ drop index ix_word_sentence_wordtrans on word_sentence;
 alter table word_trans drop foreign key fk_word_trans_word_en;
 drop index ix_word_trans_word_en on word_trans;
 
+drop table if exists cn_word;
+
+drop table if exists cn_word_py;
+
 drop table if exists config;
 
 drop table if exists listen;
@@ -200,8 +225,6 @@ drop table if exists listen_dialog;
 drop table if exists listen_word;
 
 drop table if exists word;
-
-drop table if exists word_py;
 
 drop table if exists word_sentence;
 

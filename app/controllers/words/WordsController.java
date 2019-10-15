@@ -52,8 +52,8 @@ public class WordsController extends Controller {
     }
 
     public Result trans2Py(Http.Request request) {
-        WordPy modelRequest = (WordPy) RequestUtil.getRequestJson(request, "model", WordPy.class);
-        String sortBy = RequestUtil.getRequestString(request, "model/sortBy").orElse("code asc");
+        CnWord modelRequest = (CnWord) RequestUtil.getRequestJson(request, "model", CnWord.class);
+        String sortBy = RequestUtil.getRequestString(request, "model/sortBy").orElse("word_cn asc");
         wordService.trans2Py(modelRequest, sortBy);
         return play.mvc.Results.ok();
     }

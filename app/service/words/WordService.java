@@ -27,12 +27,13 @@ public class WordService {
     protected final WordTransRepository wordTransRepository;
     protected final WordRepository wordRepository;
     protected final WordSentenceRepository wordSentenceRepository;
-    protected final WordPyRepository wordPyRepository;
     protected final ListenRepository listenRepository;
+    protected final CnWordPyRepository cnWordPyRepository;
+    protected final CnWordRepository cnWordRepository;
 
     @Inject
     public WordService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
-                       MessagesApi messagesApi, WordRepository wordRepository, WordTransRepository wordTransRepository, WordSentenceRepository wordSentenceRepository, WordPyRepository wordPyRepository, ListenRepository listenRepository) {
+                       MessagesApi messagesApi, WordRepository wordRepository, WordTransRepository wordTransRepository, WordSentenceRepository wordSentenceRepository, ListenRepository listenRepository, CnWordPyRepository cnWordPyRepository, CnWordRepository cnWordRepository) {
         this.config = config;
         this.cache = cache;
         this.ws = ws;
@@ -41,8 +42,9 @@ public class WordService {
         this.wordRepository = wordRepository;
         this.wordTransRepository = wordTransRepository;
         this.wordSentenceRepository = wordSentenceRepository;
-        this.wordPyRepository = wordPyRepository;
+        this.cnWordPyRepository = cnWordPyRepository;
         this.listenRepository = listenRepository;
+        this.cnWordRepository = cnWordRepository;
     }
 
 
@@ -113,15 +115,23 @@ public class WordService {
         dict(wordEnList);
     }
 
-    public void trans2Py(WordPy modelRequest, String sortBy) {
-        List<WordPy> wordPyList = wordPyRepository.list(modelRequest, sortBy);
-        for (WordPy wordPy : wordPyList) {
+    public void trans2Py(CnWord modelRequest, String sortBy) {
+        List<CnWord> cnWordList = cnWordRepository.list(modelRequest, sortBy);
+        List<CnWordPy> cnWordPyList = new ArrayList<>();
+        for (CnWord cnWord : cnWordList) {
             try {
-                wordPy.py = StringUtil.getPy(wordPy.word, " ", PinyinFormat.WITH_TONE_MARK);
+                CnWordPy cnWordPy = new CnWordPy();
+                CnWordPK cnWordPK = new CnWordPK();
+                cnWordPK.wordCn = cnWord.wordCn;
+                cnWordPK.wordPy = StringUtil.getPy(cnWord.wordCn, " ", PinyinFormat.WITH_TONE_MARK);
+                cnWordPy.pk = cnWordPK;
+                cnWordPy.status = true;
+                cnWordPy.createTime = new Date();
+                cnWordPyList.add(cnWordPy);
             } catch (PinyinException e) {
                 e.printStackTrace();
             }
         }
-        wordPyRepository.saveAll(wordPyList);
+        cnWordPyRepository.saveAll(cnWordPyList);
     }
 }

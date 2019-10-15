@@ -2,7 +2,6 @@ package repository.words;
 
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
-import models.base.BasicSimpleModel;
 import models.words.WordTrans;
 import play.db.ebean.EbeanConfig;
 import repository.DatabaseExecutionContext;

@@ -1,16 +1,14 @@
 package repository.words;
 
-import io.ebean.Expr;
 import io.ebean.ExpressionList;
-import models.base.BasicSimpleModel;
-import models.words.WordPy;
+import models.words.CnWord;
 import play.db.ebean.EbeanConfig;
 import repository.DatabaseExecutionContext;
 import repository.base.BasicSimpleRepository;
 
 import javax.inject.Inject;
 
-public class WordPyRepository extends BasicSimpleRepository<WordPy> {
+public class WordPyRepository extends BasicSimpleRepository<CnWord> {
 
     @Inject
     public WordPyRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
@@ -18,18 +16,18 @@ public class WordPyRepository extends BasicSimpleRepository<WordPy> {
     }
 
     @Override
-    public ExpressionList<WordPy> getExpr(WordPy model) {
-        ExpressionList<WordPy> expressionList = getExpressionList(model);
+    public ExpressionList<CnWord> getExpr(CnWord model) {
+        ExpressionList<CnWord> expressionList = getExpressionList(model);
         return expressionList;
     }
 
     @Override
-    public boolean isNullKey(WordPy model) {
+    public boolean isNullKey(CnWord model) {
         return model.word == null;
     }
 
     @Override
-    public Object getKey(WordPy model) {
+    public Object getKey(CnWord model) {
         return model.word;
     }
     
