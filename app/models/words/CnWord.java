@@ -7,18 +7,15 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class WordChinese extends BasicSimpleModel {
+public class CnWord extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Finder<Long, WordChinese> find = new Finder<>(WordChinese.class, "default");
+    public static final Finder<Long, CnWord> find = new Finder<>(CnWord.class, "default");
 
     @Id
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) COMMENT '单词中文'")
     public String wordCn;
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词拼音'")
-    public String py;
 
     @ManyToOne
     @JoinColumn(name = "source")

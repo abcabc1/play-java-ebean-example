@@ -8,10 +8,10 @@ import repository.base.BasicSimpleRepository;
 
 import javax.inject.Inject;
 
-public class WordPyRepository extends BasicSimpleRepository<CnWord> {
+public class CnWordRepository extends BasicSimpleRepository<CnWord> {
 
     @Inject
-    public WordPyRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
+    public CnWordRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
         super(ebeanConfig, executionContext, "words");
     }
 
@@ -23,12 +23,12 @@ public class WordPyRepository extends BasicSimpleRepository<CnWord> {
 
     @Override
     public boolean isNullKey(CnWord model) {
-        return model.word == null;
+        return model.wordCn == null;
     }
 
     @Override
     public Object getKey(CnWord model) {
-        return model.word;
+        return model.wordCn;
     }
     
 /*
