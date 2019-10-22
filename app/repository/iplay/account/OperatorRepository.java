@@ -1,41 +1,35 @@
-package repository.words;
+package repository.iplay.account;
 
+import io.ebean.Expr;
 import io.ebean.ExpressionList;
-import models.words.CnWord;
+import models.iplay.account.Operator;
 import play.db.ebean.EbeanConfig;
 import repository.DatabaseExecutionContext;
-import repository.base.BasicSimpleRepository;
+import repository.base.BasicRepository;
 
 import javax.inject.Inject;
 
-public class CnWordRepository extends BasicSimpleRepository<CnWord> {
+public class OperatorRepository extends BasicRepository<Operator> {
 
     @Inject
-    public CnWordRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
-        super(ebeanConfig, executionContext, "words");
+    public OperatorRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
+        super(ebeanConfig, executionContext, "default");
     }
 
     @Override
-    public ExpressionList<CnWord> getExpr(CnWord model) {
-        ExpressionList<CnWord> expressionList = getExpressionList(model);
+    public ExpressionList<Operator> getExpr(Operator model) {
+        ExpressionList<Operator> expressionList = getExpressionList(model);
+        if (model.id != null) {
+            expressionList.add(Expr.eq("id", model.id));
+        }
         return expressionList;
-    }
-
-    @Override
-    public boolean isNullKey(CnWord model) {
-        return model.wordCn == null;
-    }
-
-    @Override
-    public Object getKey(CnWord model) {
-        return model.wordCn;
     }
     
 /*
     @Override
-    public CompletionStage<Optional<Menu>> save(WordPy model) {
+    public CompletionStage<Optional<Menu>> save(Operator model) {
         return supplyAsync(() -> {
-            Optional<WordPy> rtn = Optional.empty();
+            Optional<Operator> rtn = Optional.empty();
             if (model.id == null) {
                 model.createTime = new Date();
                 model.status = true;
@@ -43,7 +37,7 @@ public class CnWordRepository extends BasicSimpleRepository<CnWord> {
                 model.save();
                 rtn = Optional.of(model);
             } else {
-                WordPy modelTemp = (WordPy) getModel(model);
+                Operator modelTemp = (Operator) getModel(model);
                 if (modelTemp != null) {
                     model.updateTime = new Date();
                     model.modelCode = modelTemp.modelCode;
@@ -62,14 +56,14 @@ public class CnWordRepository extends BasicSimpleRepository<CnWord> {
         }, executionContext);
     }
 
-    public void shiftParent(WordPy model) {
+    public void shiftParent(Operator model) {
         model.modelOrder = Optional.ofNullable(model.modelOrder).orElse(1);
         if (model.parent == null || model.parent.id == null) {
             model.modelLevel = 1;
             model.modelCodeSeq = model.modelCode;
             model.modelOrderSeq = StringUtil.rounding(model.modelOrder, 3);
         } else {
-            WordPy parent = (WordPy) getModel(model.parent);
+            Operator parent = (Operator) getModel(model.parent);
             if (parent != null) {
                 model.modelLevel = parent.modelLevel + 1;
                 model.modelCodeSeq = parent.modelCodeSeq + "." + model.modelCode;
@@ -78,7 +72,7 @@ public class CnWordRepository extends BasicSimpleRepository<CnWord> {
         }
     }
 
-    public void resetChild(WordPy modelFrom, WordPy modelTo, String modelClass) {
+    public void resetChild(Operator modelFrom, Operator modelTo, String modelClass) {
         System.out.println(modelTo.modelCodeSeq + ":" + modelFrom.modelCodeSeq);
         System.out.println(modelTo.modelLevel + ":" + modelFrom.modelLevel);
         System.out.println(modelTo.modelOrderSeq + ":" + modelFrom.modelOrderSeq);

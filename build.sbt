@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
   ,"com.github.stuxuhai" % "jpinyin" % "1.1.8"
   ,"net.coobird" % "thumbnailator" % "0.4.8"
   ,"com.github.karelcemus" %% "play-redis" % "2.5.0"
-  ,"com.graphql-java" % "graphql-java" % "2019-09-22T22-20-34-9e83320"
+//  ,"com.graphql-java" % "graphql-java" % "2019-09-22T22-20-34-9e83320"
   ,"com.graphql-java" % "graphql-java-tools" % "5.2.4"
   , "org.jsoup" % "jsoup" % "1.12.1"
 

@@ -2,7 +2,6 @@ package repository.base;
 
 import io.ebean.*;
 import models.base.BasicSimpleModel;
-import models.words.Word;
 import play.db.ebean.EbeanConfig;
 import repository.DatabaseExecutionContext;
 

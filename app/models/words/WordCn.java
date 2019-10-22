@@ -7,19 +7,23 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class CnWordPy extends BasicSimpleModel {
+public class CnWord extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
-    @EmbeddedId
-    public CnWordPK pk;
+    public static final Finder<Long, CnWord> find = new Finder<>(CnWord.class, "words");
+
+    @Id
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) COMMENT '单词中文'")
+    public String wordCn;
 
     @ManyToOne
-    @JoinColumn(name = "word_cn", referencedColumnName = "word_cn", insertable = false, updatable = false)
-    public CnWord cnWord;
+    @JoinColumn(name = "source")
+    public Config source;
 
-    public static final Finder<Long, CnWordPy> find = new Finder<>(CnWordPy.class, "default");
-
+    @ManyToOne
+    @JoinColumn(name = "knowledge")
+    public Config knowledge;
 /*
     @JsonBackReference(value = "operatorPass")
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '111111' COMMENT '密码'")

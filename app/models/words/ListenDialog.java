@@ -12,13 +12,13 @@ public class ListenDialog extends BasicModel {
     private static final long serialVersionUID = 1L;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '听力对话问题英文'")
-    public String listenDialogQuestionEn;
+    public String dialogQuestionEn;
     @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '听力对话回答英文'")
-    public String listenDialogAnswerEn;
+    public String dialogAnswerEn;
     @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '听力对话问题中文'")
-    public String listenDialogQuestionCn;
+    public String dialogQuestionCn;
     @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '听力对话回答中文'")
-    public String listenDialogAnswerCn;
+    public String dialogAnswerCn;
 
     @ManyToOne
     @JoinColumn(name = "listen")

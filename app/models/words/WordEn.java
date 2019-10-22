@@ -22,6 +22,10 @@ public class Word extends BasicSimpleModel {
     @JoinColumn(name = "source")
     public Config source;
 
+    @ManyToOne
+    @JoinColumn(name = "knowledge")
+    public Config knowledge;
+
 /*    @ManyToMany
     @JoinTable(name = "listen_word")
     @JsonIgnoreProperties(value = {"words"})

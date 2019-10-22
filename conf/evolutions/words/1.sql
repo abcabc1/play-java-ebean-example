@@ -52,36 +52,18 @@ BEGIN
   EXECUTE stmt;
 END
 $$
-create table cn_word (
-  word_cn                       varchar(16) COMMENT '单词中文' not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  source                        varchar(32) COMMENT '配置编码',
-  constraint pk_cn_word primary key (word_cn)
-);
-
-create table cn_word_py (
-  word_cn                       varchar(16) DEFAULT '' COMMENT '单词英文' not null,
-  word_py                       varchar(16) DEFAULT '' COMMENT '单词类别' not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  constraint pk_cn_word_py primary key (word_cn,word_py)
-);
-
 create table config (
-  config_code                   varchar(32) COMMENT '配置编码' not null,
+  model_code                    varchar(32) COMMENT '节点编码' not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  config_name                   varchar(32) DEFAULT '' COMMENT '配置名称' not null,
-  config_category               varchar(32) DEFAULT '' COMMENT '配置类型' not null,
-  config_category_name          varchar(32) DEFAULT '' COMMENT '配置类型名称' not null,
-  config_order                  TINYINT UNSIGNED DEFAULT 0 COMMENT '配置次序' not null,
-  parent                        varchar(32) COMMENT '配置编码',
-  constraint uq_config_config_code_config_category unique (config_code,config_category),
-  constraint pk_config primary key (config_code)
+  model_name                    varchar(64) DEFAULT '' COMMENT '节点名称' not null,
+  model_order                   TINYINT UNSIGNED DEFAULT 1 COMMENT '节点排序' not null,
+  model_order_seq               varchar(255) DEFAULT '' COMMENT '节点排序链' not null,
+  model_code_seq                varchar(2048) DEFAULT '' COMMENT '节点编码链' not null,
+  model_level                   TINYINT UNSIGNED DEFAULT 1 COMMENT '节点级别' not null,
+  parent_code                   varchar(32) COMMENT '节点编码',
+  constraint pk_config primary key (model_code)
 );
 
 create table listen (
@@ -89,10 +71,10 @@ create table listen (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0 无效/1 有效' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  listen_topic                  varchar(64) DEFAULT '' COMMENT '听力主题' not null,
-  listen_level                  varchar(16) DEFAULT '' COMMENT '听力级别' not null,
-  source                        varchar(32) COMMENT '配置编码',
-  constraint uq_listen_listen_topic unique (listen_topic),
+  topic                         varchar(64) DEFAULT '' COMMENT '听力主题' not null,
+  level                         varchar(16) DEFAULT '' COMMENT '听力级别' not null,
+  source                        varchar(32) COMMENT '节点编码',
+  constraint uq_listen_topic unique (topic),
   constraint pk_listen primary key (id)
 );
 
@@ -101,10 +83,10 @@ create table listen_dialog (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0 无效/1 有效' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  listen_dialog_question_en     varchar(256) DEFAULT '' COMMENT '听力对话问题英文' not null,
-  listen_dialog_answer_en       varchar(256) DEFAULT '' COMMENT '听力对话回答英文' not null,
-  listen_dialog_question_cn     varchar(256) DEFAULT '' COMMENT '听力对话问题中文' not null,
-  listen_dialog_answer_cn       varchar(256) DEFAULT '' COMMENT '听力对话回答中文' not null,
+  dialog_question_en            varchar(256) DEFAULT '' COMMENT '听力对话问题英文' not null,
+  dialog_answer_en              varchar(256) DEFAULT '' COMMENT '听力对话回答英文' not null,
+  dialog_question_cn            varchar(256) DEFAULT '' COMMENT '听力对话问题中文' not null,
+  dialog_answer_cn              varchar(256) DEFAULT '' COMMENT '听力对话回答中文' not null,
   listen                        bigint COMMENT 'ID',
   constraint pk_listen_dialog primary key (id)
 );
@@ -118,78 +100,133 @@ create table listen_word (
   constraint pk_listen_word primary key (word_en,listen_id)
 );
 
-create table word (
-  word_en                       varchar(32) DEFAULT '' COMMENT '单词英文' not null,
+create table word_analysis (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0 无效/1 有效' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  code                          VARCHAR(256) DEFAULT '' COMMENT '辨析单词,逗号分隔' not null,
+  knowledge                     varchar(32) COMMENT '节点编码',
+  source                        varchar(32) COMMENT '节点编码',
+  constraint uq_word_analysis_code unique (code),
+  constraint pk_word_analysis primary key (id)
+);
+
+create table word_cn (
+  word                          varchar(16) COMMENT '单词' not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  word_letter                   char(1) DEFAULT '' COMMENT '单词首字母' not null,
-  source                        varchar(32) COMMENT '配置编码',
-  constraint pk_word primary key (word_en)
+  source                        varchar(32) COMMENT '节点编码',
+  knowledge                     varchar(32) COMMENT '节点编码',
+  constraint pk_word_cn primary key (word)
 );
 
-create table word_sentence (
-  word_en                       varchar(32) DEFAULT '' COMMENT '单词英文' not null,
-  word_type                     varchar(16) DEFAULT '' COMMENT '单词类别' not null,
-  sentence_en                   varchar(256) DEFAULT '' COMMENT '单词例句英文' not null,
+create table word_cn_extend (
+  word                          varchar(16) DEFAULT '' COMMENT '单词中文' not null,
+  pinyin                        varchar(64) DEFAULT '' COMMENT '单词拼音' not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  sentence_cn                   varchar(256) DEFAULT '' COMMENT '单词例句中文' not null,
-  constraint pk_word_sentence primary key (word_en,word_type,sentence_en)
+  wrong_word                    varchar(64) DEFAULT '' COMMENT '错误单词' not null,
+  constraint pk_word_cn_extend primary key (word,pinyin)
 );
 
-create table word_trans (
-  word_en                       varchar(32) DEFAULT '' COMMENT '单词英文' not null,
-  word_type                     varchar(16) DEFAULT '' COMMENT '单词类别' not null,
+create table word_cn_sentence (
+  word                          varchar(32) DEFAULT '' COMMENT '单词' not null,
+  pinyin                        varchar(16) DEFAULT '' COMMENT '单词拼音' not null,
+  sentence                      varchar(256) DEFAULT '' COMMENT '单词例句' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  old_sentence                  varchar(256) DEFAULT '' COMMENT '单词文言文例句' not null,
+  is_show                       TINYINT UNSIGNED DEFAULT 0 COMMENT '数据是否显示 0/1' not null,
+  constraint pk_word_cn_sentence primary key (word,pinyin,sentence)
+);
+
+create table word_en (
+  word                          varchar(32) DEFAULT '' COMMENT '单词' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  letter                        char(1) DEFAULT '' COMMENT '单词首字母' not null,
+  source                        varchar(32) COMMENT '节点编码',
+  knowledge                     varchar(32) COMMENT '节点编码',
+  constraint pk_word_en primary key (word)
+);
+
+create table word_en_extend (
+  word                          varchar(32) DEFAULT '' COMMENT '单词英文' not null,
+  type                          varchar(16) DEFAULT '' COMMENT '单词类别' not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   word_cn                       varchar(64) DEFAULT '' COMMENT '单词中文' not null,
-  constraint pk_word_trans primary key (word_en,word_type)
+  constraint pk_word_en_extend primary key (word,type)
 );
 
-create index ix_cn_word_source on cn_word (source);
-alter table cn_word add constraint fk_cn_word_source foreign key (source) references config (config_code) on delete restrict on update restrict;
+create table word_en_sentence (
+  word                          varchar(32) DEFAULT '' COMMENT '单词英文' not null,
+  type                          varchar(16) DEFAULT '' COMMENT '单词类别' not null,
+  sentence                      varchar(256) DEFAULT '' COMMENT '单词例句英文' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  sentence_cn                   varchar(256) DEFAULT '' COMMENT '单词例句中文' not null,
+  is_show                       TINYINT UNSIGNED DEFAULT 0 COMMENT '数据是否显示 0/1' not null,
+  constraint pk_word_en_sentence primary key (word,type,sentence)
+);
 
-create index ix_cn_word_py_word_cn on cn_word_py (word_cn);
-alter table cn_word_py add constraint fk_cn_word_py_word_cn foreign key (word_cn) references cn_word (word_cn) on delete restrict on update restrict;
-
-create index ix_config_parent on config (parent);
-alter table config add constraint fk_config_parent foreign key (parent) references config (config_code) on delete restrict on update restrict;
+create index ix_config_parent_code on config (parent_code);
+alter table config add constraint fk_config_parent_code foreign key (parent_code) references config (model_code) on delete restrict on update restrict;
 
 create index ix_listen_source on listen (source);
-alter table listen add constraint fk_listen_source foreign key (source) references config (config_code) on delete restrict on update restrict;
+alter table listen add constraint fk_listen_source foreign key (source) references config (model_code) on delete restrict on update restrict;
 
 create index ix_listen_dialog_listen on listen_dialog (listen);
 alter table listen_dialog add constraint fk_listen_dialog_listen foreign key (listen) references listen (id) on delete restrict on update restrict;
 
 create index ix_listen_word_word_en on listen_word (word_en);
-alter table listen_word add constraint fk_listen_word_word_en foreign key (word_en) references word (word_en) on delete restrict on update restrict;
+alter table listen_word add constraint fk_listen_word_word_en foreign key (word_en) references word_en (word) on delete restrict on update restrict;
 
 create index ix_listen_word_listen_id on listen_word (listen_id);
 alter table listen_word add constraint fk_listen_word_listen_id foreign key (listen_id) references listen (id) on delete restrict on update restrict;
 
-create index ix_word_source on word (source);
-alter table word add constraint fk_word_source foreign key (source) references config (config_code) on delete restrict on update restrict;
+create index ix_word_analysis_knowledge on word_analysis (knowledge);
+alter table word_analysis add constraint fk_word_analysis_knowledge foreign key (knowledge) references config (model_code) on delete restrict on update restrict;
 
-create index ix_word_sentence_wordtrans on word_sentence (word_en,word_type);
-alter table word_sentence add constraint fk_word_sentence_wordtrans foreign key (word_en,word_type) references word_trans (word_en,word_type) on delete restrict on update restrict;
+create index ix_word_analysis_source on word_analysis (source);
+alter table word_analysis add constraint fk_word_analysis_source foreign key (source) references config (model_code) on delete restrict on update restrict;
 
-create index ix_word_trans_word_en on word_trans (word_en);
-alter table word_trans add constraint fk_word_trans_word_en foreign key (word_en) references word (word_en) on delete restrict on update restrict;
+create index ix_word_cn_source on word_cn (source);
+alter table word_cn add constraint fk_word_cn_source foreign key (source) references config (model_code) on delete restrict on update restrict;
+
+create index ix_word_cn_knowledge on word_cn (knowledge);
+alter table word_cn add constraint fk_word_cn_knowledge foreign key (knowledge) references config (model_code) on delete restrict on update restrict;
+
+create index ix_word_cn_extend_word on word_cn_extend (word);
+alter table word_cn_extend add constraint fk_word_cn_extend_word foreign key (word) references word_cn (word) on delete restrict on update restrict;
+
+create index ix_word_cn_sentence_wordcnextend on word_cn_sentence (word,pinyin);
+alter table word_cn_sentence add constraint fk_word_cn_sentence_wordcnextend foreign key (word,pinyin) references word_cn_extend (word,pinyin) on delete restrict on update restrict;
+
+create index ix_word_en_source on word_en (source);
+alter table word_en add constraint fk_word_en_source foreign key (source) references config (model_code) on delete restrict on update restrict;
+
+create index ix_word_en_knowledge on word_en (knowledge);
+alter table word_en add constraint fk_word_en_knowledge foreign key (knowledge) references config (model_code) on delete restrict on update restrict;
+
+create index ix_word_en_extend_word on word_en_extend (word);
+alter table word_en_extend add constraint fk_word_en_extend_word foreign key (word) references word_en (word) on delete restrict on update restrict;
+
+create index ix_word_en_sentence_wordenextend on word_en_sentence (word,type);
+alter table word_en_sentence add constraint fk_word_en_sentence_wordenextend foreign key (word,type) references word_en_extend (word,type) on delete restrict on update restrict;
 
 
 # --- !Downs
 
-alter table cn_word drop foreign key fk_cn_word_source;
-drop index ix_cn_word_source on cn_word;
-
-alter table cn_word_py drop foreign key fk_cn_word_py_word_cn;
-drop index ix_cn_word_py_word_cn on cn_word_py;
-
-alter table config drop foreign key fk_config_parent;
-drop index ix_config_parent on config;
+alter table config drop foreign key fk_config_parent_code;
+drop index ix_config_parent_code on config;
 
 alter table listen drop foreign key fk_listen_source;
 drop index ix_listen_source on listen;
@@ -203,18 +240,35 @@ drop index ix_listen_word_word_en on listen_word;
 alter table listen_word drop foreign key fk_listen_word_listen_id;
 drop index ix_listen_word_listen_id on listen_word;
 
-alter table word drop foreign key fk_word_source;
-drop index ix_word_source on word;
+alter table word_analysis drop foreign key fk_word_analysis_knowledge;
+drop index ix_word_analysis_knowledge on word_analysis;
 
-alter table word_sentence drop foreign key fk_word_sentence_wordtrans;
-drop index ix_word_sentence_wordtrans on word_sentence;
+alter table word_analysis drop foreign key fk_word_analysis_source;
+drop index ix_word_analysis_source on word_analysis;
 
-alter table word_trans drop foreign key fk_word_trans_word_en;
-drop index ix_word_trans_word_en on word_trans;
+alter table word_cn drop foreign key fk_word_cn_source;
+drop index ix_word_cn_source on word_cn;
 
-drop table if exists cn_word;
+alter table word_cn drop foreign key fk_word_cn_knowledge;
+drop index ix_word_cn_knowledge on word_cn;
 
-drop table if exists cn_word_py;
+alter table word_cn_extend drop foreign key fk_word_cn_extend_word;
+drop index ix_word_cn_extend_word on word_cn_extend;
+
+alter table word_cn_sentence drop foreign key fk_word_cn_sentence_wordcnextend;
+drop index ix_word_cn_sentence_wordcnextend on word_cn_sentence;
+
+alter table word_en drop foreign key fk_word_en_source;
+drop index ix_word_en_source on word_en;
+
+alter table word_en drop foreign key fk_word_en_knowledge;
+drop index ix_word_en_knowledge on word_en;
+
+alter table word_en_extend drop foreign key fk_word_en_extend_word;
+drop index ix_word_en_extend_word on word_en_extend;
+
+alter table word_en_sentence drop foreign key fk_word_en_sentence_wordenextend;
+drop index ix_word_en_sentence_wordenextend on word_en_sentence;
 
 drop table if exists config;
 
@@ -224,9 +278,17 @@ drop table if exists listen_dialog;
 
 drop table if exists listen_word;
 
-drop table if exists word;
+drop table if exists word_analysis;
 
-drop table if exists word_sentence;
+drop table if exists word_cn;
 
-drop table if exists word_trans;
+drop table if exists word_cn_extend;
+
+drop table if exists word_cn_sentence;
+
+drop table if exists word_en;
+
+drop table if exists word_en_extend;
+
+drop table if exists word_en_sentence;
 

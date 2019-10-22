@@ -9,20 +9,20 @@ import javax.persistence.Entity;
 public class WordSentencePK {
 
     @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '单词英文'")
-    public String wordEn;
+    public String word;
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词类别'")
-    public String wordType;
+    public String type;
     @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '单词例句英文'")
     public String sentenceEn;
 
     public int hashCode() {
-        return wordEn.hashCode() + wordType.hashCode() + sentenceEn.hashCode();
+        return word.hashCode() + type.hashCode() + sentenceEn.hashCode();
     }
 
     public boolean equals(Object o) {
         if (o instanceof WordSentencePK) {
             WordSentencePK pk = (WordSentencePK) o;
-            return this.wordEn.equals(pk.wordEn) && this.wordType.equals(pk.wordType) && this.sentenceEn.equals(pk.sentenceEn);
+            return this.word.equals(pk.word) && this.type.equals(pk.type) && this.sentenceEn.equals(pk.sentenceEn);
         }
         return false;
     }

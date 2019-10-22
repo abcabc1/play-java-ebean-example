@@ -23,9 +23,17 @@ POST        /computers/:id/delete        controllers.example.MainController.dele
 GET         /assets/*file                controllers.Assets.at(path="/public", file)
 
 POST        /words/wordsService          controllers.words.WordsController.testService(request: Request)
-# extract word from dict.cn
+# extract wordEn from dict.cn
 POST        /words/dict2Db               controllers.words.WordsController.dict2Db(request: Request)
-# add relation between listen and word
+# add relation between listen and wordEn
 POST        /words/listen2Word           controllers.words.WordsController.listen2Word(request: Request)
-# make up Chinese word with Pinyin
-POST        /words/trans2Py           controllers.words.WordsController.trans2Py(request: Request)
+# make up Chinese wordEn with Pinyin
+POST        /words/trans2Py              controllers.words.WordsController.trans2Py(request: Request)
+POST        /words/testTime              controllers.words.WordsController.testTime(request: Request)
+
++ nocsrf
+GET         /graphiql                    controllers.graphql.GraphiQLController.index
++ nocsrf
+GET         /graphql                     controllers.graphql.GraphQLController.index
++ nocsrf
+POST        /graphql                     controllers.graphql.GraphQLController.query(request: Request)

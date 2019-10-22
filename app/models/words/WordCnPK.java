@@ -8,9 +8,9 @@ import javax.persistence.Entity;
 @Entity
 public class CnWordPK {
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词英文'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词中文'")
     public String wordCn;
-    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词类别'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '单词拼音'")
     public String wordPy;
 
     public int hashCode() {

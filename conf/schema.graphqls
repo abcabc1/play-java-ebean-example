@@ -1,0 +1,13 @@
+schema {
+    query: Query
+}
+
+type Query {
+    employers(id: String): [Employer]
+}
+
+type Employer {
+    id: String
+    name: String
+    mnEmployersNumber: String
+}

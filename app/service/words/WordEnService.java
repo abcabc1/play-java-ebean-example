@@ -48,8 +48,8 @@ public class WordService {
     }
 
 
-    public void dict2Db(Word word, String sortBy) {
-        dict(wordRepository.list(word, sortBy).stream().map(v -> v.wordEn).collect(Collectors.toList()));
+    public void dict2Db(WordEn wordEn, String sortBy) {
+        dict(wordRepository.list(wordEn, sortBy).stream().map(v -> v.word).collect(Collectors.toList()));
     }
 
     public void dict(List<String> list) {
@@ -60,37 +60,37 @@ public class WordService {
     }
 
     public void analysis(String word, String html) {
-        HashSet<WordTrans> wordTransList = new HashSet<>();
-        HashSet<WordSentence> wordSentenceList = new HashSet<>();
+        HashSet<WordEnExtend> wordEnExtendList = new HashSet<>();
+        HashSet<WordEnSentence> wordEnSentenceList = new HashSet<>();
         Map<String, List<String>> map = HtmlUtil.extractDictHtml(Jsoup.parse(html));
         for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            WordTrans wordTrans = new WordTrans();
-            WordPK wordPK = new WordPK();
-            wordPK.wordEn = word;
+            WordEnExtend wordEnExtend = new WordEnExtend();
+            WordEnPK wordEnPK = new WordEnPK();
+            wordEnPK.word = word;
             String key = entry.getKey();
-            wordPK.wordType = key.substring(0, key.indexOf("."));
-            wordTrans.pk = wordPK;
-            wordTrans.wordCn = key.replaceAll(wordPK.wordType + ".", "");
-            wordTrans.status = true;
-            wordTrans.createTime = new Date();
-            wordTransList.add(wordTrans);
+            wordEnPK.type = key.substring(0, key.indexOf("."));
+            wordEnExtend.pk = wordEnPK;
+            wordEnExtend.wordCn = key.replaceAll(wordEnPK.type + ".", "");
+            wordEnExtend.status = true;
+            wordEnExtend.createTime = new Date();
+            wordEnExtendList.add(wordEnExtend);
             for (String value : entry.getValue()) {
                 String[] values = value.split("<br>");
-                WordSentence wordSentence = new WordSentence();
-                WordSentencePK wordSentencePK = new WordSentencePK();
-                wordSentencePK.wordEn = wordTrans.pk.wordEn;
-                wordSentencePK.wordType = wordTrans.pk.wordType;
-                wordSentencePK.sentenceEn = values[0];
-                wordSentence.pk = wordSentencePK;
-                wordSentence.wordTrans = wordTrans;
-                wordSentence.sentenceCn = values[1];
-                wordSentence.status = true;
-                wordSentence.createTime = new Date();
-                wordSentenceList.add(wordSentence);
+                WordEnSentence wordEnSentence = new WordEnSentence();
+                WordEnSentencePK wordEnSentencePK = new WordEnSentencePK();
+                wordEnSentencePK.word = wordEnExtend.pk.word;
+                wordEnSentencePK.type = wordEnExtend.pk.type;
+                wordEnSentencePK.sentence = values[0];
+                wordEnSentence.pk = wordEnSentencePK;
+                wordEnSentence.wordEnExtend = wordEnExtend;
+                wordEnSentence.sentenceCn = values[1];
+                wordEnSentence.status = true;
+                wordEnSentence.createTime = new Date();
+                wordEnSentenceList.add(wordEnSentence);
             }
         }
-        wordTransRepository.saveAll(wordTransList);
-        wordSentenceRepository.saveAll(wordSentenceList);
+        wordTransRepository.saveAll(wordEnExtendList);
+        wordSentenceRepository.saveAll(wordEnSentenceList);
     }
 
     public void checkAndSave(Long listenId, String[] wordEns) {
@@ -98,14 +98,14 @@ public class WordService {
         model.id = listenId;
         Optional<Listen> listen = listenRepository.get(model);
         List<String> wordEnList = new ArrayList<>();
-        List<Word> wordList = new ArrayList<>();
+        List<WordEn> wordList = new ArrayList<>();
         for (String wordEn : wordEns) {
-            Word word = new Word();
-            word.wordEn = wordEn;
+            WordEn word = new WordEn();
+            word.word = wordEn;
             if (!wordRepository.get(word).isPresent()) {
                 word.status = true;
                 word.createTime = new Date();
-                word.wordLetter = wordEn.substring(0, 1).toUpperCase();
+                word.letter = wordEn.substring(0, 1).toUpperCase();
                 word.source = listen.get().source;
                 wordEnList.add(wordEn);
                 wordList.add(word);
@@ -115,23 +115,29 @@ public class WordService {
         dict(wordEnList);
     }
 
-    public void trans2Py(CnWord modelRequest, String sortBy) {
-        List<CnWord> cnWordList = cnWordRepository.list(modelRequest, sortBy);
-        List<CnWordPy> cnWordPyList = new ArrayList<>();
-        for (CnWord cnWord : cnWordList) {
+    public void trans2Py(WordCn modelRequest, String sortBy) {
+        List<WordCn> wordCnList = cnWordRepository.list(modelRequest, sortBy);
+        List<WordCnExtend> wordCnExtendList = new ArrayList<>();
+        for (WordCn wordCn : wordCnList) {
             try {
-                CnWordPy cnWordPy = new CnWordPy();
-                CnWordPK cnWordPK = new CnWordPK();
-                cnWordPK.wordCn = cnWord.wordCn;
-                cnWordPK.wordPy = StringUtil.getPy(cnWord.wordCn, " ", PinyinFormat.WITH_TONE_MARK);
-                cnWordPy.pk = cnWordPK;
-                cnWordPy.status = true;
-                cnWordPy.createTime = new Date();
-                cnWordPyList.add(cnWordPy);
+                WordCnExtend wordCnExtend = new WordCnExtend();
+                WordCnPK wordCnPK = new WordCnPK();
+                wordCnPK.word = wordCn.word;
+                wordCnPK.pinyin = StringUtil.getPy(wordCn.word, " ", PinyinFormat.WITH_TONE_MARK);
+                wordCnExtend.pk = wordCnPK;
+                wordCnExtend.status = true;
+                wordCnExtend.createTime = new Date();
+                wordCnExtend.wrongWord = "";
+                wordCnExtendList.add(wordCnExtend);
             } catch (PinyinException e) {
                 e.printStackTrace();
             }
         }
-        cnWordPyRepository.saveAll(cnWordPyList);
+        cnWordPyRepository.saveAll(wordCnExtendList);
+    }
+
+    public void testTime(WordCn modelRequest, String sortBy) {
+        List<WordCn> wordCnList = cnWordRepository.list(modelRequest, sortBy);
+        System.out.println("size="+ wordCnList.size());
     }
 }

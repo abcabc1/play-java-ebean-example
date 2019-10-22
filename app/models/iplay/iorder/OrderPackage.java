@@ -1,25 +1,23 @@
-package models.words;
+package models.iplay.iorder;
 
 import io.ebean.Finder;
-import models.base.BasicSimpleModel;
+import models.base.BasicModel;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table
-public class CnWord extends BasicSimpleModel {
+public class OrderPackage extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Finder<Long, CnWord> find = new Finder<>(CnWord.class, "default");
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
+    public String code;
 
-    @Id
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) COMMENT '单词中文'")
-    public String wordCn;
+    public static final Finder<Long, OrderPackage> find = new Finder<>(OrderPackage.class, "default");
 
-    @ManyToOne
-    @JoinColumn(name = "source")
-    public Config source;
 /*
     @JsonBackReference(value = "operatorPass")
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '111111' COMMENT '密码'")

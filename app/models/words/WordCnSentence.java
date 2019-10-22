@@ -7,24 +7,27 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class WordSentence extends BasicSimpleModel {
+public class WordCnSentence extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    public WordSentencePK pk;
+    public WordCnSentencePK pk;
 
     @ManyToOne
     @JoinColumns(value = {
-            @JoinColumn(name = "word_en", referencedColumnName = "word_en", insertable = false, updatable = false),
-            @JoinColumn(name = "word_type", referencedColumnName = "word_type", insertable = false, updatable = false)
+            @JoinColumn(name = "word", referencedColumnName = "word", insertable = false, updatable = false),
+            @JoinColumn(name = "pinyin", referencedColumnName = "pinyin", insertable = false, updatable = false)
     })
-    public WordTrans wordTrans;
+    public WordCnExtend wordCnExtend;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '单词例句中文'")
-    public String sentenceCn;
+    @Column(nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '单词文言文例句'")
+    public String oldSentence;
 
-    public static final Finder<WordSentencePK, WordSentence> find = new Finder<>(WordSentence.class, "words");
+    @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED DEFAULT 0 COMMENT '数据是否显示 0/1'")
+    public boolean isShow;
+
+    public static final Finder<Long, WordCnSentence> find = new Finder<>(WordCnSentence.class, "words");
 
 /*
     @JsonBackReference(value = "operatorPass")

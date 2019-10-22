@@ -12,16 +12,16 @@ public class WordTrans extends BasicSimpleModel {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    public WordPK pk;
+    public WordEnPK pk;
 
     @ManyToOne
     @JoinColumn(name = "word_en", referencedColumnName = "word_en", insertable = false, updatable = false)
-    public Word word;
+    public WordEn wordEn;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '单词中文'")
     public String wordCn;
 
-    public static final Finder<WordPK, WordTrans> find = new Finder<>(WordTrans.class, "words");
+    public static final Finder<WordEnPK, WordTrans> find = new Finder<>(WordTrans.class, "words");
 /*
 
     @ManyToOne

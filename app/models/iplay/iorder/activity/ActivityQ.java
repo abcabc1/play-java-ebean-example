@@ -1,28 +1,22 @@
-package models.words;
+package models.iplay.iorder.activity;
 
 import io.ebean.Finder;
-import models.base.BasicSimpleModel;
+import models.base.BasicModel;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table
-public class ListenWord extends BasicSimpleModel {
+public class ActivityQ extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @EmbeddedId
-    public ListenWordPK pk;
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
+    public String code;
 
-    @ManyToOne
-    @JoinColumn(name = "word", referencedColumnName = "word", insertable = false, updatable = false)
-    public WordEn wordEn;
-
-    @ManyToOne
-    @JoinColumn(name = "listen_id")
-    public Listen listen;
-
-    public static final Finder<ListenWordPK, ListenWord> find = new Finder<>(ListenWord.class, "words");
+    public static final Finder<Long, ActivityQ> find = new Finder<>(ActivityQ.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")

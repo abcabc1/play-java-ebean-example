@@ -7,21 +7,22 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class Listen extends BasicModel {
+public class WordAnalysis extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '听力主题'")
-    public String topic;
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(256) DEFAULT '' COMMENT '辨析单词,逗号分隔'")
+    public String code;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '听力级别'")
-    public String level;
+    @ManyToOne
+    @JoinColumn(name = "knowledge")
+    public Config knowledge;
 
     @ManyToOne
     @JoinColumn(name = "source")
     public Config source;
 
-    public static final Finder<Long, Listen> find = new Finder<>(Listen.class, "words");
+    public static final Finder<Long, WordAnalysis> find = new Finder<>(WordAnalysis.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")
@@ -39,7 +40,10 @@ public class Listen extends BasicModel {
     public List<Org> orgs;
  */
 
-/*    @ManyToMany(mappedBy = "listens")
-    @JsonIgnoreProperties(value = {"listens"})
-    public List<Word> words;*/
+/*
+    @ManyToMany
+    @JoinTable(name = "org_operator")
+    @JsonIgnoreProperties(value = {"roles", "orgs"})
+    public List<Operator> operators;
+*/
 }
