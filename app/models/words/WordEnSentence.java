@@ -7,17 +7,17 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class WordSentence extends BasicSimpleModel {
+public class WordEnSentence extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    public WordSentencePK pk;
+    public WordEnSentencePK pk;
 
     @ManyToOne
     @JoinColumns(value = {
-            @JoinColumn(name = "word_en", referencedColumnName = "word_en", insertable = false, updatable = false),
-            @JoinColumn(name = "word_type", referencedColumnName = "word_type", insertable = false, updatable = false)
+            @JoinColumn(name = "word", referencedColumnName = "word", insertable = false, updatable = false),
+            @JoinColumn(name = "type", referencedColumnName = "type", insertable = false, updatable = false)
     })
     public WordEnExtend wordEnExtend;
 
@@ -26,7 +26,8 @@ public class WordSentence extends BasicSimpleModel {
 
     @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED DEFAULT 0 COMMENT '数据是否显示 0/1'")
     public boolean isShow;
-    public static final Finder<WordSentencePK, WordSentence> find = new Finder<>(WordSentence.class, "words");
+
+    public static final Finder<WordEnSentencePK, WordEnSentence> find = new Finder<>(WordEnSentence.class, "words");
 
 /*
     @JsonBackReference(value = "operatorPass")

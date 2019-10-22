@@ -5,22 +5,22 @@ import play.cache.AsyncCacheApi;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.HttpExecutionContext;
 import play.libs.ws.WSClient;
-import repository.words.WordSentenceRepository;
+import repository.words.WordEnSentenceRepository;
 
 import javax.inject.Inject;
 
-public class WordSentenceService {
+public class WordEnSentenceService {
 
     protected final Config config;
     protected final AsyncCacheApi cache;
     protected final WSClient ws;
     protected final HttpExecutionContext httpExecutionContext;
     protected final MessagesApi messagesApi;
-    protected final WordSentenceRepository repository;
+    protected final WordEnSentenceRepository repository;
 
     @Inject
-    public WordSentenceService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
-                               MessagesApi messagesApi, WordSentenceRepository repository) {
+    public WordEnSentenceService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
+                                 MessagesApi messagesApi, WordEnSentenceRepository repository) {
         this.config = config;
         this.cache = cache;
         this.ws = ws;

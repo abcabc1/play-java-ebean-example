@@ -7,15 +7,15 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class CnWord extends BasicSimpleModel {
+public class WordCn extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Finder<Long, CnWord> find = new Finder<>(CnWord.class, "words");
+    public static final Finder<Long, WordCn> find = new Finder<>(WordCn.class, "words");
 
     @Id
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) COMMENT '单词中文'")
-    public String wordCn;
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) COMMENT '单词'")
+    public String word;
 
     @ManyToOne
     @JoinColumn(name = "source")

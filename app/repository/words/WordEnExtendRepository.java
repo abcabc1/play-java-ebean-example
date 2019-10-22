@@ -9,10 +9,10 @@ import repository.base.BasicSimpleRepository;
 
 import javax.inject.Inject;
 
-public class WordTransRepository extends BasicSimpleRepository<WordEnExtend> {
+public class WordEnExtendRepository extends BasicSimpleRepository<WordEnExtend> {
 
     @Inject
-    public WordTransRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
+    public WordEnExtendRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
         super(ebeanConfig, executionContext, "words");
     }
 

@@ -7,20 +7,20 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class CnWordExtend extends BasicSimpleModel {
+public class WordCnExtend extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
-    public CnWordPK pk;
+    public WordCnPK pk;
 
     @ManyToOne
-    @JoinColumn(name = "word_cn", referencedColumnName = "word_cn", insertable = false, updatable = false)
+    @JoinColumn(name = "word", referencedColumnName = "word", insertable = false, updatable = false)
     public WordCn wordCn;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '错误单词中文'")
-    public String wordCnWrong;
+    @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '错误单词'")
+    public String wrongWord;
 
-    public static final Finder<Long, CnWordExtend> find = new Finder<>(CnWordExtend.class, "words");
+    public static final Finder<Long, WordCnExtend> find = new Finder<>(WordCnExtend.class, "words");
 
 /*
     @JsonBackReference(value = "operatorPass")

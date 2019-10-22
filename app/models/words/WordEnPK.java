@@ -6,21 +6,21 @@ import javax.persistence.Entity;
 
 @Embeddable
 @Entity
-public class WordPK {
+public class WordEnPK {
 
     @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '单词英文'")
-    public String wordEn;
+    public String word;
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '单词类别'")
-    public String wordType;
+    public String type;
 
     public int hashCode() {
-        return wordEn.hashCode() + wordType.hashCode();
+        return word.hashCode() + type.hashCode();
     }
 
     public boolean equals(Object o) {
-        if (o instanceof WordPK) {
-            WordPK pk = (WordPK) o;
-            return this.wordEn.equals(pk.wordEn) && this.wordType.equals(pk.wordType);
+        if (o instanceof WordEnPK) {
+            WordEnPK pk = (WordEnPK) o;
+            return this.word.equals(pk.word) && this.type.equals(pk.type);
         }
         return false;
     }

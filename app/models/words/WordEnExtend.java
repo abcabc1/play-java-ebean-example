@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class WordTrans extends BasicSimpleModel {
+public class WordEnExtend extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -15,13 +15,13 @@ public class WordTrans extends BasicSimpleModel {
     public WordEnPK pk;
 
     @ManyToOne
-    @JoinColumn(name = "word_en", referencedColumnName = "word_en", insertable = false, updatable = false)
+    @JoinColumn(name = "word", referencedColumnName = "word", insertable = false, updatable = false)
     public WordEn wordEn;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(64) DEFAULT '' COMMENT '单词中文'")
     public String wordCn;
 
-    public static final Finder<WordEnPK, WordTrans> find = new Finder<>(WordTrans.class, "words");
+    public static final Finder<WordEnPK, WordEnExtend> find = new Finder<>(WordEnExtend.class, "words");
 /*
 
     @ManyToOne

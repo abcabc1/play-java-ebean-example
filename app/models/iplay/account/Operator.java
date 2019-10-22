@@ -1,4 +1,4 @@
-package models.iplay;
+package models.iplay.account;
 
 import io.ebean.Finder;
 import models.base.BasicModel;

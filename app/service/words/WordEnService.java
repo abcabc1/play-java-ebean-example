@@ -17,39 +17,39 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WordService {
+public class WordEnService {
 
     protected final Config config;
     protected final AsyncCacheApi cache;
     protected final WSClient ws;
     protected final HttpExecutionContext httpExecutionContext;
     protected final MessagesApi messagesApi;
-    protected final WordTransRepository wordTransRepository;
-    protected final WordRepository wordRepository;
-    protected final WordSentenceRepository wordSentenceRepository;
+    protected final WordEnExtendRepository wordEnExtendRepository;
+    protected final WordEnRepository wordEnRepository;
+    protected final WordEnSentenceRepository wordEnSentenceRepository;
     protected final ListenRepository listenRepository;
-    protected final CnWordPyRepository cnWordPyRepository;
-    protected final CnWordRepository cnWordRepository;
+    protected final WordCnExtendRepository wordCnExtendRepository;
+    protected final WordCnRepository wordCnRepository;
 
     @Inject
-    public WordService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
-                       MessagesApi messagesApi, WordRepository wordRepository, WordTransRepository wordTransRepository, WordSentenceRepository wordSentenceRepository, ListenRepository listenRepository, CnWordPyRepository cnWordPyRepository, CnWordRepository cnWordRepository) {
+    public WordEnService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
+                         MessagesApi messagesApi, WordEnRepository wordEnRepository, WordEnExtendRepository wordEnExtendRepository, WordEnSentenceRepository wordEnSentenceRepository, ListenRepository listenRepository, WordCnExtendRepository wordCnExtendRepository, WordCnRepository wordCnRepository) {
         this.config = config;
         this.cache = cache;
         this.ws = ws;
         this.httpExecutionContext = httpExecutionContext;
         this.messagesApi = messagesApi;
-        this.wordRepository = wordRepository;
-        this.wordTransRepository = wordTransRepository;
-        this.wordSentenceRepository = wordSentenceRepository;
-        this.cnWordPyRepository = cnWordPyRepository;
+        this.wordEnRepository = wordEnRepository;
+        this.wordEnExtendRepository = wordEnExtendRepository;
+        this.wordEnSentenceRepository = wordEnSentenceRepository;
+        this.wordCnExtendRepository = wordCnExtendRepository;
         this.listenRepository = listenRepository;
-        this.cnWordRepository = cnWordRepository;
+        this.wordCnRepository = wordCnRepository;
     }
 
 
     public void dict2Db(WordEn wordEn, String sortBy) {
-        dict(wordRepository.list(wordEn, sortBy).stream().map(v -> v.word).collect(Collectors.toList()));
+        dict(wordEnRepository.list(wordEn, sortBy).stream().map(v -> v.word).collect(Collectors.toList()));
     }
 
     public void dict(List<String> list) {
@@ -89,8 +89,8 @@ public class WordService {
                 wordEnSentenceList.add(wordEnSentence);
             }
         }
-        wordTransRepository.saveAll(wordEnExtendList);
-        wordSentenceRepository.saveAll(wordEnSentenceList);
+        wordEnExtendRepository.saveAll(wordEnExtendList);
+        wordEnSentenceRepository.saveAll(wordEnSentenceList);
     }
 
     public void checkAndSave(Long listenId, String[] wordEns) {
@@ -102,7 +102,7 @@ public class WordService {
         for (String wordEn : wordEns) {
             WordEn word = new WordEn();
             word.word = wordEn;
-            if (!wordRepository.get(word).isPresent()) {
+            if (!wordEnRepository.get(word).isPresent()) {
                 word.status = true;
                 word.createTime = new Date();
                 word.letter = wordEn.substring(0, 1).toUpperCase();
@@ -111,12 +111,12 @@ public class WordService {
                 wordList.add(word);
             }
         }
-        wordRepository.saveAll(wordList);
+        wordEnRepository.saveAll(wordList);
         dict(wordEnList);
     }
 
     public void trans2Py(WordCn modelRequest, String sortBy) {
-        List<WordCn> wordCnList = cnWordRepository.list(modelRequest, sortBy);
+        List<WordCn> wordCnList = wordCnRepository.list(modelRequest, sortBy);
         List<WordCnExtend> wordCnExtendList = new ArrayList<>();
         for (WordCn wordCn : wordCnList) {
             try {
@@ -133,11 +133,11 @@ public class WordService {
                 e.printStackTrace();
             }
         }
-        cnWordPyRepository.saveAll(wordCnExtendList);
+        wordCnExtendRepository.saveAll(wordCnExtendList);
     }
 
     public void testTime(WordCn modelRequest, String sortBy) {
-        List<WordCn> wordCnList = cnWordRepository.list(modelRequest, sortBy);
+        List<WordCn> wordCnList = wordCnRepository.list(modelRequest, sortBy);
         System.out.println("size="+ wordCnList.size());
     }
 }

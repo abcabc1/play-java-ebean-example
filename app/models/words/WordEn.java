@@ -7,16 +7,16 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class Word extends BasicSimpleModel {
+public class WordEn extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '单词英文'")
-    public String wordEn;
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '单词'")
+    public String word;
 
     @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT '' COMMENT '单词首字母'")
-    public String wordLetter;
+    public String letter;
 
     @ManyToOne
     @JoinColumn(name = "source")
@@ -31,7 +31,7 @@ public class Word extends BasicSimpleModel {
     @JsonIgnoreProperties(value = {"words"})
     public List<Listen> listens;*/
 
-    public static final Finder<String, Word> find = new Finder<>(Word.class, "words");
+    public static final Finder<String, WordEn> find = new Finder<>(WordEn.class, "words");
 
     /*@OneToMany(mappedBy = "word")
     @JsonManagedReference

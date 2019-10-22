@@ -11,7 +11,7 @@ import repository.words.WordEnExtendRepository;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class WordTransService {
+public class WordEnExtendService {
 
     protected final Config config;
     protected final AsyncCacheApi cache;
@@ -21,8 +21,8 @@ public class WordTransService {
     protected final WordEnExtendRepository repository;
 
     @Inject
-    public WordTransService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
-                            MessagesApi messagesApi, WordEnExtendRepository repository) {
+    public WordEnExtendService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
+                               MessagesApi messagesApi, WordEnExtendRepository repository) {
         this.config = config;
         this.cache = cache;
         this.ws = ws;
