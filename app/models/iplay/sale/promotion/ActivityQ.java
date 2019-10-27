@@ -1,10 +1,11 @@
-package models.iplay.iorder.activity;
+package models.iplay.sale.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,6 +16,9 @@ public class ActivityQ extends BasicModel {
 
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
+
+    @OneToOne
+    public Activity activity;
 
     public static final Finder<Long, ActivityQ> find = new Finder<>(ActivityQ.class, "default");
 

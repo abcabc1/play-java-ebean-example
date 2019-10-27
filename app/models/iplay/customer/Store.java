@@ -2,9 +2,11 @@ package models.iplay.customer;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.iplay.account.Operator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,8 +15,14 @@ public class Store extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
+    @OneToOne
+    public Operator operator;
+
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
+    public String areaCode;
 
     public static final Finder<Long, Store> find = new Finder<>(Store.class, "default");
 

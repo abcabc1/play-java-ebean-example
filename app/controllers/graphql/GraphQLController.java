@@ -4,6 +4,7 @@ import com.coxautodev.graphql.tools.SchemaParser;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
+import graphql.resolvers.Mutation;
 import graphql.resolvers.Query;
 import graphql.schema.GraphQLSchema;
 import play.libs.Json;
@@ -32,7 +33,7 @@ public class GraphQLController extends Controller {
     private static GraphQLSchema buildSchema() {
         return SchemaParser.newParser()
                 .file("schema.graphqls")
-                .resolvers(new Query())
+                .resolvers(new Query(), new Mutation())
                 .build()
                 .makeExecutableSchema();
     }

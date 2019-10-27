@@ -53,34 +53,33 @@ BEGIN
 END
 $$
 create table config (
-  model_code                    varchar(32) COMMENT '节点编码' not null,
+  code                          varchar(32) COMMENT '配置编码' not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  model_name                    varchar(64) DEFAULT '' COMMENT '节点名称' not null,
-  model_order                   TINYINT UNSIGNED DEFAULT 1 COMMENT '节点排序' not null,
-  model_order_seq               varchar(255) DEFAULT '' COMMENT '节点排序链' not null,
-  model_code_seq                varchar(2048) DEFAULT '' COMMENT '节点编码链' not null,
-  model_level                   TINYINT UNSIGNED DEFAULT 1 COMMENT '节点级别' not null,
-  parent_code                   varchar(32) COMMENT '节点编码',
-  constraint pk_config primary key (model_code)
+  name                          varchar(32) DEFAULT '' COMMENT '配置名称' not null,
+  category                      varchar(32) DEFAULT '' COMMENT '配置类型' not null,
+  category_name                 varchar(32) DEFAULT '' COMMENT '配置类型名称' not null,
+  config_order                  TINYINT UNSIGNED DEFAULT 0 COMMENT '配置次序' not null,
+  parent                        varchar(32) COMMENT '配置编码',
+  constraint pk_config primary key (code)
 );
 
 create table listen (
   id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0 无效/1 有效' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效(0 无效/1 有效)' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   topic                         varchar(64) DEFAULT '' COMMENT '听力主题' not null,
   level                         varchar(16) DEFAULT '' COMMENT '听力级别' not null,
-  source                        varchar(32) COMMENT '节点编码',
+  source                        varchar(32) COMMENT '配置编码',
   constraint uq_listen_topic unique (topic),
   constraint pk_listen primary key (id)
 );
 
 create table listen_dialog (
   id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0 无效/1 有效' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效(0 无效/1 有效)' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   dialog_question_en            varchar(256) DEFAULT '' COMMENT '听力对话问题英文' not null,
@@ -102,12 +101,12 @@ create table listen_word (
 
 create table word_analysis (
   id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0 无效/1 有效' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效(0 无效/1 有效)' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   code                          VARCHAR(256) DEFAULT '' COMMENT '辨析单词,逗号分隔' not null,
-  knowledge                     varchar(32) COMMENT '节点编码',
-  source                        varchar(32) COMMENT '节点编码',
+  knowledge                     varchar(32) COMMENT '配置编码',
+  source                        varchar(32) COMMENT '配置编码',
   constraint uq_word_analysis_code unique (code),
   constraint pk_word_analysis primary key (id)
 );
@@ -117,8 +116,8 @@ create table word_cn (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  source                        varchar(32) COMMENT '节点编码',
-  knowledge                     varchar(32) COMMENT '节点编码',
+  source                        varchar(32) COMMENT '配置编码',
+  knowledge                     varchar(32) COMMENT '配置编码',
   constraint pk_word_cn primary key (word)
 );
 
@@ -150,8 +149,8 @@ create table word_en (
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   letter                        char(1) DEFAULT '' COMMENT '单词首字母' not null,
-  source                        varchar(32) COMMENT '节点编码',
-  knowledge                     varchar(32) COMMENT '节点编码',
+  source                        varchar(32) COMMENT '配置编码',
+  knowledge                     varchar(32) COMMENT '配置编码',
   constraint pk_word_en primary key (word)
 );
 
@@ -177,11 +176,11 @@ create table word_en_sentence (
   constraint pk_word_en_sentence primary key (word,type,sentence)
 );
 
-create index ix_config_parent_code on config (parent_code);
-alter table config add constraint fk_config_parent_code foreign key (parent_code) references config (model_code) on delete restrict on update restrict;
+create index ix_config_parent on config (parent);
+alter table config add constraint fk_config_parent foreign key (parent) references config (code) on delete restrict on update restrict;
 
 create index ix_listen_source on listen (source);
-alter table listen add constraint fk_listen_source foreign key (source) references config (model_code) on delete restrict on update restrict;
+alter table listen add constraint fk_listen_source foreign key (source) references config (code) on delete restrict on update restrict;
 
 create index ix_listen_dialog_listen on listen_dialog (listen);
 alter table listen_dialog add constraint fk_listen_dialog_listen foreign key (listen) references listen (id) on delete restrict on update restrict;
@@ -193,16 +192,16 @@ create index ix_listen_word_listen_id on listen_word (listen_id);
 alter table listen_word add constraint fk_listen_word_listen_id foreign key (listen_id) references listen (id) on delete restrict on update restrict;
 
 create index ix_word_analysis_knowledge on word_analysis (knowledge);
-alter table word_analysis add constraint fk_word_analysis_knowledge foreign key (knowledge) references config (model_code) on delete restrict on update restrict;
+alter table word_analysis add constraint fk_word_analysis_knowledge foreign key (knowledge) references config (code) on delete restrict on update restrict;
 
 create index ix_word_analysis_source on word_analysis (source);
-alter table word_analysis add constraint fk_word_analysis_source foreign key (source) references config (model_code) on delete restrict on update restrict;
+alter table word_analysis add constraint fk_word_analysis_source foreign key (source) references config (code) on delete restrict on update restrict;
 
 create index ix_word_cn_source on word_cn (source);
-alter table word_cn add constraint fk_word_cn_source foreign key (source) references config (model_code) on delete restrict on update restrict;
+alter table word_cn add constraint fk_word_cn_source foreign key (source) references config (code) on delete restrict on update restrict;
 
 create index ix_word_cn_knowledge on word_cn (knowledge);
-alter table word_cn add constraint fk_word_cn_knowledge foreign key (knowledge) references config (model_code) on delete restrict on update restrict;
+alter table word_cn add constraint fk_word_cn_knowledge foreign key (knowledge) references config (code) on delete restrict on update restrict;
 
 create index ix_word_cn_extend_word on word_cn_extend (word);
 alter table word_cn_extend add constraint fk_word_cn_extend_word foreign key (word) references word_cn (word) on delete restrict on update restrict;
@@ -211,10 +210,10 @@ create index ix_word_cn_sentence_wordcnextend on word_cn_sentence (word,pinyin);
 alter table word_cn_sentence add constraint fk_word_cn_sentence_wordcnextend foreign key (word,pinyin) references word_cn_extend (word,pinyin) on delete restrict on update restrict;
 
 create index ix_word_en_source on word_en (source);
-alter table word_en add constraint fk_word_en_source foreign key (source) references config (model_code) on delete restrict on update restrict;
+alter table word_en add constraint fk_word_en_source foreign key (source) references config (code) on delete restrict on update restrict;
 
 create index ix_word_en_knowledge on word_en (knowledge);
-alter table word_en add constraint fk_word_en_knowledge foreign key (knowledge) references config (model_code) on delete restrict on update restrict;
+alter table word_en add constraint fk_word_en_knowledge foreign key (knowledge) references config (code) on delete restrict on update restrict;
 
 create index ix_word_en_extend_word on word_en_extend (word);
 alter table word_en_extend add constraint fk_word_en_extend_word foreign key (word) references word_en (word) on delete restrict on update restrict;
@@ -225,8 +224,8 @@ alter table word_en_sentence add constraint fk_word_en_sentence_wordenextend for
 
 # --- !Downs
 
-alter table config drop foreign key fk_config_parent_code;
-drop index ix_config_parent_code on config;
+alter table config drop foreign key fk_config_parent;
+drop index ix_config_parent on config;
 
 alter table listen drop foreign key fk_listen_source;
 drop index ix_listen_source on listen;

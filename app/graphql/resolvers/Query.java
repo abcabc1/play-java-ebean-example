@@ -1,7 +1,9 @@
 package graphql.resolvers;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import graphql.types.Data;
 import graphql.types.Employer;
+import graphql.types.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,19 @@ import java.util.List;
 public class Query implements GraphQLQueryResolver {
 
     public Query() {
+    }
+
+    public User getUserById(Integer id) {
+        for (User user: Data.users) {
+            if (user.id.intValue() == id) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public List<User> listUser() {
+        return Data.users;
     }
 
     public List<Employer> employers(String id) {

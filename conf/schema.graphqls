@@ -1,13 +1,58 @@
 schema {
     query: Query
+    mutation: Mutation
 }
 
+# 查询相关接口
 type Query {
+    # 通过id获取用户信息
+    getUserById(id: Int!): User
+    # 用户信息列表
+    listUser: [User]
+
     employers(id: String): [Employer]
+}
+
+# 变更相关接口
+type Mutation {
+    # 添加用户信息
+    saveUser(user: addUserInput!): Boolean
+    # 删除用户信息
+    deleteUser(id: Int!): Boolean
+    # 更新用户信息
+    updateUser(user: updateUserInput!): Boolean
 }
 
 type Employer {
     id: String
     name: String
     mnEmployersNumber: String
+}
+
+# 用户信息对象
+type User {
+    # 编号
+    id: Int!
+    # 用户名
+    name: String!
+    # 密码
+    password: String!
+    # 年龄
+    age: Int
+}
+
+# 添加用户信息输入参数
+input addUserInput {
+    id: Int!
+    name: String!
+    password: String!
+    age: Int
+}
+
+# 更新用户信息输入参数
+input updateUserInput {
+    id: Int!
+    name: String!
+    password: String!
+    age: Int
 }

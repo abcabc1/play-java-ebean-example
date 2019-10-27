@@ -1,22 +1,26 @@
-package models.iplay.iorder;
+package models.iplay.sale.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class OrderDetailItem extends BasicModel {
+public class ActivityMj extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    public static final Finder<Long, OrderDetailItem> find = new Finder<>(OrderDetailItem.class, "default");
+    @OneToOne
+    public Activity activity;
+
+    public static final Finder<Long, ActivityMj> find = new Finder<>(ActivityMj.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")

@@ -1,4 +1,4 @@
-package models.iplay.iorder.activity;
+package models.iplay.sale;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
@@ -9,14 +9,14 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityMs extends BasicModel {
+public class OrderPackageItem extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    public static final Finder<Long, ActivityMs> find = new Finder<>(ActivityMs.class, "default");
+    public static final Finder<Long, OrderPackageItem> find = new Finder<>(OrderPackageItem.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")
