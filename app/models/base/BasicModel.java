@@ -17,7 +17,7 @@ public class BasicModel extends Model {
     @Column(columnDefinition = "bigint COMMENT 'ID'")
     public Long id;
 
-    @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效(0 无效/1 有效)'")
+    @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]'")
     public Boolean status;
     //
 //   @ManyToOne

@@ -1745,7 +1745,7 @@ INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('ups
 INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('upward(s)', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'U');
 INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('use&', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'U');
 INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('useless', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'U');
-INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('user', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'U');
+INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('author', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'U');
 INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('vain', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'V');
 INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('valley', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'V');
 INSERT INTO word_h (code, status, create_time, update_time, letter) VALUES ('vanilla', 1, '2019-10-09 17:43:14', '2019-10-09 17:45:19', 'V');

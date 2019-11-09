@@ -2,9 +2,12 @@ package models.iplay.sale.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.iplay.customer.User;
+import models.iplay.customer.UserTag;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,10 +16,22 @@ public class ActivityUser extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]'")
+    public String type;
 
-    public static final Finder<Long, ActivityUser> find = new Finder<>(ActivityUser.class, "default");
+    @ManyToOne
+    public Activity activity;
+
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'U' COMMENT '类别:[U 用户,T 标签]'")
+    public String userType;
+
+    @ManyToOne
+    public User user;
+
+    @ManyToOne
+    public UserTag userTag;
+
+    public static final Finder<Long, ActivityUser> find = new Finder<>(ActivityUser.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

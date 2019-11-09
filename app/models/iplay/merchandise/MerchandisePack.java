@@ -19,7 +19,7 @@ public class MerchandisePack extends BasicSimpleModel {
     @ManyToOne
     public Pack pack;
 
-    public static final Finder<Long, MerchandisePack> find = new Finder<>(MerchandisePack.class, "default");
+    public static final Finder<Long, MerchandisePack> find = new Finder<>(MerchandisePack.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

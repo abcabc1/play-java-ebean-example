@@ -16,7 +16,7 @@ public class OrderMain extends BasicModel {
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    public static final Finder<Long, OrderMain> find = new Finder<>(OrderMain.class, "default");
+    public static final Finder<Long, OrderMain> find = new Finder<>(OrderMain.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

@@ -1,39 +1,28 @@
-package models.iplay.customer;
+package models.iplay.merchandise;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.iplay.account.Operator;
 import models.iplay.common.Config;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table
-public class User extends BasicModel {
+public class MerchandiseTag extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToOne
-    public Operator operator;
-
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
-    public String name;
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
-    public String area;
+    @ManyToOne
+    public Merchandise merchandise;
 
     @ManyToOne
-    @JoinColumn(name = "level")
-    public Config level;
+    @JoinColumn(name = "tag")
+    public Config tag;
 
-    @ManyToOne
-    @JoinColumn(name = "type")
-    public Config type;
-
-    public static final Finder<Long, User> find = new Finder<>(User.class, "iplay");
+    public static final Finder<Long, MerchandiseTag> find = new Finder<>(MerchandiseTag.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

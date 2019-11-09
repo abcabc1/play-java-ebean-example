@@ -4,9 +4,11 @@ import com.coxautodev.graphql.tools.SchemaParser;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
+import graphql.resolvers.DateTimeScalar;
 import graphql.resolvers.Mutation;
 import graphql.resolvers.Query;
 import graphql.schema.GraphQLSchema;
+import graphql.types.Data;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -20,8 +22,8 @@ public class GraphQLController extends Controller {
     }
 
     public Result query(Http.Request request) {
+        Data.initBooks();
         String query = RequestUtil.getRequestString(request, "query").orElse("");
-        //String operationName = json.get("operationName").asText();
         GraphQL graphQL = GraphQL.newGraphQL(buildSchema()).build();
         ExecutionInput executionInput = ExecutionInput.newExecutionInput()
                 .query(query)
@@ -34,6 +36,7 @@ public class GraphQLController extends Controller {
         return SchemaParser.newParser()
                 .file("schema.graphqls")
                 .resolvers(new Query(), new Mutation())
+                .scalars(new DateTimeScalar())
                 .build()
                 .makeExecutableSchema();
     }

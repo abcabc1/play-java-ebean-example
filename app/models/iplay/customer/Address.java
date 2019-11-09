@@ -16,7 +16,7 @@ public class Address extends BasicModel {
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    public static final Finder<Long, Address> find = new Finder<>(Address.class, "default");
+    public static final Finder<Long, Address> find = new Finder<>(Address.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

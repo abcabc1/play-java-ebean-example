@@ -1320,7 +1320,7 @@ INSERT INTO word_trans_h (code, type, status, create_time, update_time, translat
 INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('upstairs', 'adv', 1, '2019-10-09 18:33:09', '2019-10-09 18:33:09', ' 在楼上；往楼上；在高处；头脑上');
 INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('upstairs', 'n', 1, '2019-10-09 18:33:09', '2019-10-09 18:33:09', ' 楼上');
 INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('useless', 'adj', 1, '2019-10-09 18:33:12', '2019-10-09 18:33:12', ' 无用的；无效的');
-INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('user', 'n', 1, '2019-10-09 18:33:05', '2019-10-09 18:33:05', ' 用户；使用者');
+INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('author', 'n', 1, '2019-10-09 18:33:05', '2019-10-09 18:33:05', ' 用户；使用者');
 INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('vain', 'adj', 1, '2019-10-09 18:33:08', '2019-10-09 18:33:08', ' 自负的；徒劳的；无效的；虚荣的');
 INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('valley', 'n', 1, '2019-10-09 18:33:08', '2019-10-09 18:33:08', ' 山谷；溪谷；流域');
 INSERT INTO word_trans_h (code, type, status, create_time, update_time, translation) VALUES ('vanilla', 'n', 1, '2019-10-09 18:33:10', '2019-10-09 18:33:10', ' 香草');

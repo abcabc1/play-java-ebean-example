@@ -21,10 +21,13 @@ public class Store extends BasicModel {
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
-    public String areaCode;
+    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '名称'")
+    public String name;
 
-    public static final Finder<Long, Store> find = new Finder<>(Store.class, "default");
+    @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
+    public String area;
+
+    public static final Finder<Long, Store> find = new Finder<>(Store.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

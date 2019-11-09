@@ -26,8 +26,8 @@ libraryDependencies ++= Seq(
 //  ,"com.graphql-java" % "graphql-java" % "2019-09-22T22-20-34-9e83320"
   ,"com.graphql-java" % "graphql-java-tools" % "5.2.4"
   , "org.jsoup" % "jsoup" % "1.12.1"
-
-
+//  , "com.auth0" % "java-jwt" % "3.8.3"
+  , "io.jsonwebtoken" % "jjwt" % "0.9.1"
 )
 testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-a", "-v")
 

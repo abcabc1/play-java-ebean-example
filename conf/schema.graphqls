@@ -1,3 +1,29 @@
+# 用户信息对象
+type Author {
+    # 编号
+    id: Int!
+
+    # 作者名
+    name: String!
+
+    # 密码
+    password: String!
+
+    # 年龄
+    age: Int
+
+    # 性别
+    gender: Gender
+}
+
+type Book {
+    id: Int
+    name: String
+    publishTime: DateTime
+    author: Author
+    length(unit: LengthUnit = METER): Float
+}
+
 schema {
     query: Query
     mutation: Mutation
@@ -6,53 +32,81 @@ schema {
 # 查询相关接口
 type Query {
     # 通过id获取用户信息
-    getUserById(id: Int!): User
-    # 用户信息列表
-    listUser: [User]
+    getAuthorById(id: Int!): Author
 
-    employers(id: String): [Employer]
+    # 用户信息列表
+    listAuthor: [Author]
+
+    listBook: [Book]
 }
 
 # 变更相关接口
 type Mutation {
-    # 添加用户信息
-    saveUser(user: addUserInput!): Boolean
-    # 删除用户信息
-    deleteUser(id: Int!): Boolean
-    # 更新用户信息
-    updateUser(user: updateUserInput!): Boolean
+    # 添加作者信息
+    saveAuthor(author: addAuthorInput!): Boolean
+
+    # 批量添加作者信息
+    saveAuthors(authors: [addAuthorInput!]): Boolean
+
+    # 删除作者信息
+    deleteAuthor(id: Int!): Boolean
+
+    # 更新作者信息
+    updateAuthor(author: updateAuthorInput!): Boolean
+
+    # 添加书籍信息
+    saveBook(book: addBookInput!, authorId: Int): Boolean
+
+    # 删除书籍信息
+    deleteBook(id: Int!): Boolean
+
+    # 更新书籍信息
+    updateBook(book: updateBookInput!): Boolean
 }
 
-type Employer {
-    id: String
-    name: String
-    mnEmployersNumber: String
-}
 
-# 用户信息对象
-type User {
-    # 编号
-    id: Int!
-    # 用户名
-    name: String!
-    # 密码
-    password: String!
-    # 年龄
-    age: Int
-}
-
-# 添加用户信息输入参数
-input addUserInput {
+# 添加作者信息输入参数
+input addAuthorInput {
     id: Int!
     name: String!
-    password: String!
     age: Int
+    password: String!
+    gender: Gender
 }
 
-# 更新用户信息输入参数
-input updateUserInput {
+# 更新作者信息输入参数
+input updateAuthorInput {
     id: Int!
     name: String!
-    password: String!
     age: Int
+    password: String!
+    gender: Gender
 }
+
+# 添加作者信息输入参数
+input addBookInput {
+    id: Int!
+    name: String!
+    publishTime: DateTime
+}
+
+# 更新作者信息输入参数
+input updateBookInput {
+    id: Int!
+    name: String!
+    publishTime: DateTime
+}
+
+enum Gender {
+    Male
+    Female
+    Unkown
+}
+
+enum LengthUnit {
+    METER
+    CENTIMETER
+    MILLIMETRE
+}
+
+scalar DateTime

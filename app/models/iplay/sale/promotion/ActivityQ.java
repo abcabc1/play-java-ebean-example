@@ -17,10 +17,13 @@ public class ActivityQ extends BasicModel {
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
+    @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
+    public String name;
+
     @OneToOne
     public Activity activity;
 
-    public static final Finder<Long, ActivityQ> find = new Finder<>(ActivityQ.class, "default");
+    public static final Finder<Long, ActivityQ> find = new Finder<>(ActivityQ.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

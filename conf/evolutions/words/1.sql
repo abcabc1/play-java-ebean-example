@@ -67,7 +67,7 @@ create table config (
 
 create table listen (
   id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效(0 无效/1 有效)' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   topic                         varchar(64) DEFAULT '' COMMENT '听力主题' not null,
@@ -79,7 +79,7 @@ create table listen (
 
 create table listen_dialog (
   id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效(0 无效/1 有效)' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   dialog_question_en            varchar(256) DEFAULT '' COMMENT '听力对话问题英文' not null,
@@ -101,7 +101,7 @@ create table listen_word (
 
 create table word_analysis (
   id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效(0 无效/1 有效)' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   code                          VARCHAR(256) DEFAULT '' COMMENT '辨析单词,逗号分隔' not null,

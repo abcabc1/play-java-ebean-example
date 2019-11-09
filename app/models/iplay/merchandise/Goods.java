@@ -16,7 +16,10 @@ public class Goods extends BasicModel {
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    public static final Finder<Long, Goods> find = new Finder<>(Goods.class, "default");
+    @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
+    public String name;
+
+    public static final Finder<Long, Goods> find = new Finder<>(Goods.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")
