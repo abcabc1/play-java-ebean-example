@@ -1,8 +1,8 @@
-package repository.iplay.account;
+package repository.ecommerce;
 
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
-import models.iplay.account.Operator;
+import models.ecommerce.account.Operator;
 import play.db.ebean.EbeanConfig;
 import repository.DatabaseExecutionContext;
 import repository.base.BasicRepository;
