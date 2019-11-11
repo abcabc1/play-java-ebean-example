@@ -219,6 +219,56 @@ create table operator (
   constraint pk_operator primary key (id)
 );
 
+create table order_detail (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  constraint uq_order_detail_code unique (code),
+  constraint pk_order_detail primary key (id)
+);
+
+create table order_detail_item (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  constraint uq_order_detail_item_code unique (code),
+  constraint pk_order_detail_item primary key (id)
+);
+
+create table order_main (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  constraint uq_order_main_code unique (code),
+  constraint pk_order_main primary key (id)
+);
+
+create table order_package (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  constraint uq_order_package_code unique (code),
+  constraint pk_order_package primary key (id)
+);
+
+create table order_package_item (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  constraint uq_order_package_item_code unique (code),
+  constraint pk_order_package_item primary key (id)
+);
+
 create table pack (
   id                            bigint COMMENT 'ID' auto_increment not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
@@ -568,6 +618,16 @@ drop table if exists merchandise_pack;
 drop table if exists merchandise_tag;
 
 drop table if exists operator;
+
+drop table if exists order_detail;
+
+drop table if exists order_detail_item;
+
+drop table if exists order_main;
+
+drop table if exists order_package;
+
+drop table if exists order_package_item;
 
 drop table if exists pack;
 
