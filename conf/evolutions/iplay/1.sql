@@ -52,6 +52,18 @@ BEGIN
   EXECUTE stmt;
 END
 $$
+create table test (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  constraint uq_test_code unique (code),
+  constraint pk_test primary key (id)
+);
+
 
 # --- !Downs
+
+drop table if exists test;
 
