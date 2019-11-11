@@ -16,7 +16,7 @@ libraryDependencies += "org.mockito" % "mockito-core" % "2.1.0" % Test
 
 libraryDependencies ++= Seq(
   javaWs
-  //,caffeine
+//  ,caffeine
   ,play.sbt.PlayImport.cacheApi
   ,"mysql" % "mysql-connector-java" % "8.0.17"
   ,"org.beanshell" % "bsh" % "2.0b5"

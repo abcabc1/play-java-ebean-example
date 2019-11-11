@@ -1,4 +1,4 @@
-package models.ecommerce.sale.promotion;
+package models.ecommerce.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
@@ -10,20 +10,17 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityQ extends BasicModel {
+public class ActivityMj extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
-    public String name;
-
     @OneToOne
     public Activity activity;
 
-    public static final Finder<Long, ActivityQ> find = new Finder<>(ActivityQ.class, "ecommerce");
+    public static final Finder<Long, ActivityMj> find = new Finder<>(ActivityMj.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

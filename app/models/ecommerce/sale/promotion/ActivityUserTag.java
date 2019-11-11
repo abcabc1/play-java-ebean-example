@@ -2,7 +2,6 @@ package models.ecommerce.sale.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.customer.User;
 import models.ecommerce.customer.UserTag;
 
 import javax.persistence.Column;
@@ -12,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityUser extends BasicModel {
+public class ActivityUserTag extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,12 +25,9 @@ public class ActivityUser extends BasicModel {
 //    public String userType;
 
     @ManyToOne
-    public User user;
-
-    @ManyToOne
     public UserTag userTag;
 
-    public static final Finder<Long, ActivityUser> find = new Finder<>(ActivityUser.class, "ecommerce");
+    public static final Finder<Long, ActivityUserTag> find = new Finder<>(ActivityUserTag.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

@@ -1,7 +1,7 @@
 package models.ecommerce.sale.promotion;
 
 import io.ebean.Finder;
-import models.base.BasicSimpleModel;
+import models.base.BasicModel;
 import models.ecommerce.merchandise.Merchandise;
 import models.ecommerce.merchandise.MerchandiseTag;
 
@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityMerchandise extends BasicSimpleModel {
+public class ActivityMerchandise extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,8 +22,8 @@ public class ActivityMerchandise extends BasicSimpleModel {
     @ManyToOne
     public Activity activity;
 
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'M' COMMENT '类别:[M 商品,T标签]'")
-    public String merchandiseType;
+//    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'M' COMMENT '类别:[M 商品,T标签]'")
+//    public String merchandiseType;
 
     @ManyToOne
     public Merchandise merchandise;

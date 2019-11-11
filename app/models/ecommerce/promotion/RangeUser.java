@@ -1,9 +1,8 @@
-package models.ecommerce.sale.promotion;
+package models.ecommerce.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
 import models.ecommerce.customer.User;
-import models.ecommerce.customer.UserTag;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +11,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityUser extends BasicModel {
+public class RangeUser extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]'")
-    public String type;
+    public String blackWhite;
 
     @ManyToOne
     public Activity activity;
@@ -28,10 +27,7 @@ public class ActivityUser extends BasicModel {
     @ManyToOne
     public User user;
 
-    @ManyToOne
-    public UserTag userTag;
-
-    public static final Finder<Long, ActivityUser> find = new Finder<>(ActivityUser.class, "ecommerce");
+    public static final Finder<Long, RangeUser> find = new Finder<>(RangeUser.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

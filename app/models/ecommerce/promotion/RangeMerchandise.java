@@ -1,25 +1,37 @@
-package models.ecommerce.sale.promotion;
+package models.ecommerce.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.ecommerce.merchandise.Merchandise;
+import models.ecommerce.merchandise.MerchandiseTag;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityMs extends BasicModel {
+public class RangeMerchandise extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]'")
+    public String blackWhite;
 
-    @OneToOne
+    @ManyToOne
     public Activity activity;
-    public static final Finder<Long, ActivityMs> find = new Finder<>(ActivityMs.class, "ecommerce");
+
+//    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'M' COMMENT '类别:[M 商品,T标签]'")
+//    public String merchandiseType;
+
+    @ManyToOne
+    public Merchandise merchandise;
+
+    @ManyToOne
+    public MerchandiseTag merchandiseTag;
+
+    public static final Finder<Long, RangeMerchandise> find = new Finder<>(RangeMerchandise.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

@@ -37,3 +37,8 @@ GET         /graphiql                    controllers.graphql.GraphiQLController.
 GET         /graphql                     controllers.graphql.GraphQLController.index
 + nocsrf
 POST        /graphql                     controllers.graphql.GraphQLController.query(request: Request)
+
+POST        /removeActivity              controllers.ecommerce.ActivityController.removeActivity(request: Request)
+POST        /setActivity                 controllers.ecommerce.ActivityController.setActivity(request: Request)
+POST        /refreshActivity             controllers.ecommerce.ActivityController.refreshActivity(request: Request)
+POST        /getActivity                 controllers.ecommerce.ActivityController.getActivity(request: Request)
