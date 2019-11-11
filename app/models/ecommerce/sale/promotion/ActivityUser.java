@@ -1,25 +1,37 @@
-package models.iplay.merchandise;
+package models.ecommerce.sale.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.ecommerce.customer.User;
+import models.ecommerce.customer.UserTag;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class MerchandisePack extends BasicModel {
+public class ActivityUser extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    public Merchandise merchandise;
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]'")
+    public String type;
 
     @ManyToOne
-    public Pack pack;
+    public Activity activity;
 
-    public static final Finder<Long, MerchandisePack> find = new Finder<>(MerchandisePack.class, "iplay");
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'U' COMMENT '类别:[U 用户,T 标签]'")
+    public String userType;
+
+    @ManyToOne
+    public User user;
+
+    @ManyToOne
+    public UserTag userTag;
+
+    public static final Finder<Long, ActivityUser> find = new Finder<>(ActivityUser.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

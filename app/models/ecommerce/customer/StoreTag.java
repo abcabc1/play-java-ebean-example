@@ -1,29 +1,28 @@
-package models.iplay.sale.promotion;
+package models.ecommerce.customer;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.ecommerce.common.Config;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityQ extends BasicModel {
+public class StoreTag extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
+    @ManyToOne
+    public Store store;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
-    public String name;
+    @ManyToOne
+    @JoinColumn(name = "tag")
+    public Config tag;
 
-    @OneToOne
-    public Activity activity;
-
-    public static final Finder<Long, ActivityQ> find = new Finder<>(ActivityQ.class, "iplay");
+    public static final Finder<Long, StoreTag> find = new Finder<>(StoreTag.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")

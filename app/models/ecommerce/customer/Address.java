@@ -1,25 +1,22 @@
-package models.iplay.merchandise;
+package models.ecommerce.customer;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class MerchandisePack extends BasicModel {
+public class Address extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    public Merchandise merchandise;
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
+    public String code;
 
-    @ManyToOne
-    public Pack pack;
-
-    public static final Finder<Long, MerchandisePack> find = new Finder<>(MerchandisePack.class, "iplay");
+    public static final Finder<Long, Address> find = new Finder<>(Address.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")

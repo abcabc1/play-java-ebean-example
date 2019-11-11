@@ -1,25 +1,28 @@
-package models.iplay.merchandise;
+package models.ecommerce.customer;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.ecommerce.common.Config;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class MerchandisePack extends BasicModel {
+public class StoreLicense extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
-    public Merchandise merchandise;
+    public Store store;
 
     @ManyToOne
-    public Pack pack;
+    @JoinColumn(name = "license")
+    public Config license;
 
-    public static final Finder<Long, MerchandisePack> find = new Finder<>(MerchandisePack.class, "iplay");
+    public static final Finder<Long, StoreLicense> find = new Finder<>(StoreLicense.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")

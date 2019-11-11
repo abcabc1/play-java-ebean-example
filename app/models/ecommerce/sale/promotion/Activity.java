@@ -1,4 +1,4 @@
-package models.iplay.sale.promotion;
+package models.ecommerce.sale.promotion;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.ebean.Finder;

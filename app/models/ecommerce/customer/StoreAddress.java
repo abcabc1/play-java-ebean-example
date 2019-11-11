@@ -1,4 +1,4 @@
-package models.iplay.merchandise;
+package models.ecommerce.customer;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
@@ -9,17 +9,17 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class MerchandisePack extends BasicModel {
+public class StoreAddress extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
-    public Merchandise merchandise;
+    public Store store;
 
     @ManyToOne
-    public Pack pack;
+    public Address address;
 
-    public static final Finder<Long, MerchandisePack> find = new Finder<>(MerchandisePack.class, "iplay");
+    public static final Finder<Long, StoreAddress> find = new Finder<>(StoreAddress.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")
