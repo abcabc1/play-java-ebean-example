@@ -31,7 +31,7 @@ public class ActivityUser extends BasicModel {
     @ManyToOne
     public UserTag userTag;
 
-    public static final Finder<Long, ActivityUser> find = new Finder<>(ActivityUser.class, "iplay");
+    public static final Finder<Long, ActivityUser> find = new Finder<>(ActivityUser.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

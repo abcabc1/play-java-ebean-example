@@ -31,7 +31,7 @@ public class ActivityMerchandise extends BasicSimpleModel {
     @ManyToOne
     public MerchandiseTag merchandiseTag;
 
-    public static final Finder<Long, ActivityMerchandise> find = new Finder<>(ActivityMerchandise.class, "iplay");
+    public static final Finder<Long, ActivityMerchandise> find = new Finder<>(ActivityMerchandise.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

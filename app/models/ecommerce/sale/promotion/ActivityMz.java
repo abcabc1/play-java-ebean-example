@@ -20,7 +20,7 @@ public class ActivityMz extends BasicModel {
     @OneToOne
     public Activity activity;
 
-    public static final Finder<Long, ActivityMz> find = new Finder<>(ActivityMz.class, "iplay");
+    public static final Finder<Long, ActivityMz> find = new Finder<>(ActivityMz.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

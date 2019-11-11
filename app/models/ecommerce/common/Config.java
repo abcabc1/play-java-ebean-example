@@ -35,7 +35,7 @@ public class Config extends BasicSimpleModel {
     @JsonManagedReference
     public List<Config> childs;
 
-    public static final Finder<String, Config> find = new Finder<>(Config.class, "iplay");
+    public static final Finder<String, Config> find = new Finder<>(Config.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

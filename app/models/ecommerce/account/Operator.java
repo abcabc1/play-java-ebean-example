@@ -24,7 +24,7 @@ public class Operator extends BasicModel {
     @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED DEFAULT 1  COMMENT '类别[0 admin,1 user,2 store]'")
     public Integer type;
 
-    public static final Finder<Long, Operator> find = new Finder<>(Operator.class, "iplay");
+    public static final Finder<Long, Operator> find = new Finder<>(Operator.class, "ecommerce");
 
  /*
     @ManyToOne

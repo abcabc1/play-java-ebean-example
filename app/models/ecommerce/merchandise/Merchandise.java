@@ -19,7 +19,7 @@ public class Merchandise extends BasicModel {
     @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '商品名称'")
     public String name;
 
-    public static final Finder<Long, Merchandise> find = new Finder<>(Merchandise.class, "iplay");
+    public static final Finder<Long, Merchandise> find = new Finder<>(Merchandise.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

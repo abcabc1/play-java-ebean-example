@@ -22,7 +22,7 @@ public class UserTag extends BasicModel {
     @JoinColumn(name = "tag")
     public Config tag;
 
-    public static final Finder<Long, UserTag> find = new Finder<>(UserTag.class, "iplay");
+    public static final Finder<Long, UserTag> find = new Finder<>(UserTag.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

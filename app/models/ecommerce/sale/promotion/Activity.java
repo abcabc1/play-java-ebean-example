@@ -48,7 +48,7 @@ public class Activity extends BasicModel {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     public Date endTo;
 
-    public static final Finder<Long, Activity> find = new Finder<>(Activity.class, "iplay");
+    public static final Finder<Long, Activity> find = new Finder<>(Activity.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

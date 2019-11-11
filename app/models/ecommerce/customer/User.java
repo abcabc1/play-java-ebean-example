@@ -33,7 +33,7 @@ public class User extends BasicModel {
     @JoinColumn(name = "type")
     public Config type;
 
-    public static final Finder<Long, User> find = new Finder<>(User.class, "iplay");
+    public static final Finder<Long, User> find = new Finder<>(User.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

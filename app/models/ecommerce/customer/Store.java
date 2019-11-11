@@ -27,7 +27,7 @@ public class Store extends BasicModel {
     @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
     public String area;
 
-    public static final Finder<Long, Store> find = new Finder<>(Store.class, "iplay");
+    public static final Finder<Long, Store> find = new Finder<>(Store.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

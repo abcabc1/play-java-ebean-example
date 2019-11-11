@@ -16,7 +16,7 @@ public class Test extends BasicModel {
     @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
     public String code;
 
-    public static final Finder<Long, Test> find = new Finder<>(Test.class, "default");
+    public static final Finder<Long, Test> find = new Finder<>(Test.class, "iplay");
 
 /*
     @JsonBackReference(value = "operatorPass")
