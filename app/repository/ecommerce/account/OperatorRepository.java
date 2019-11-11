@@ -1,4 +1,4 @@
-package repository.ecommerce;
+package repository.ecommerce.account;
 
 import io.ebean.Expr;
 import io.ebean.ExpressionList;

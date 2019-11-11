@@ -1,4 +1,4 @@
-package service.iplay.account;
+package service.ecommerce.account;
 
 import com.typesafe.config.Config;
 import play.cache.redis.AsyncCacheApi;
