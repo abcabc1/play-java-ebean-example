@@ -57,7 +57,6 @@ create table activity (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   name                          varchar(32) DEFAULT '' COMMENT '名称' not null,
   type                          TINYINT DEFAULT -1 COMMENT '类别:[1 秒杀Ms,2 满减Mj,3 满折Mz]' not null,
   level                         TINYINT UNSIGNED DEFAULT 1 COMMENT '级别:[1,2...]' not null,
@@ -65,67 +64,31 @@ create table activity (
   running                       TINYINT DEFAULT -1 COMMENT '运行状态:[停止 -1,运行 1]' not null,
   start_time                    DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '开始时间' not null,
   end_time                      DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '结束时间' not null,
-  constraint uq_activity_code unique (code),
   constraint pk_activity primary key (id)
 );
 
-create table activity_merchandise (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  type                          CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
-  activity_id                   bigint COMMENT 'ID',
-  merchandise_id                bigint COMMENT 'ID',
-  merchandise_tag_id            bigint COMMENT 'ID',
-  constraint pk_activity_merchandise primary key (id)
-);
-
-create table activity_merchandise_tag (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  type                          CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
-  activity_id                   bigint COMMENT 'ID',
-  merchandise_tag_id            bigint COMMENT 'ID',
-  constraint pk_activity_merchandise_tag primary key (id)
-);
-
 create table activity_mj (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   activity_id                   bigint COMMENT 'ID',
-  constraint uq_activity_mj_code unique (code),
-  constraint uq_activity_mj_activity_id unique (activity_id),
-  constraint pk_activity_mj primary key (id)
+  constraint uq_activity_mj_activity_id unique (activity_id)
 );
 
 create table activity_ms (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   activity_id                   bigint COMMENT 'ID',
-  constraint uq_activity_ms_code unique (code),
-  constraint uq_activity_ms_activity_id unique (activity_id),
-  constraint pk_activity_ms primary key (id)
+  constraint uq_activity_ms_activity_id unique (activity_id)
 );
 
 create table activity_mz (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效 0/1' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   activity_id                   bigint COMMENT 'ID',
-  constraint uq_activity_mz_code unique (code),
-  constraint uq_activity_mz_activity_id unique (activity_id),
-  constraint pk_activity_mz primary key (id)
+  constraint uq_activity_mz_activity_id unique (activity_id)
 );
 
 create table activity_q (
@@ -141,36 +104,12 @@ create table activity_q (
   constraint pk_activity_q primary key (id)
 );
 
-create table activity_user (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  type                          CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
-  activity_id                   bigint COMMENT 'ID',
-  user_id                       bigint COMMENT 'ID',
-  user_tag_id                   bigint COMMENT 'ID',
-  constraint pk_activity_user primary key (id)
-);
-
-create table activity_user_tag (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  type                          CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
-  activity_id                   bigint COMMENT 'ID',
-  user_tag_id                   bigint COMMENT 'ID',
-  constraint pk_activity_user_tag primary key (id)
-);
-
 create table address (
   id                            bigint COMMENT 'ID' auto_increment not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
-  constraint uq_address_code unique (code),
+  detail                        varchar(255) DEFAULT '' COMMENT '详细' not null,
   constraint pk_address primary key (id)
 );
 
@@ -203,9 +142,7 @@ create table merchandise (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   name                          varchar(32) DEFAULT '' COMMENT '商品名称' not null,
-  constraint uq_merchandise_code unique (code),
   constraint pk_merchandise primary key (id)
 );
 
@@ -236,7 +173,7 @@ create table operator (
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   pass                          varchar(16) DEFAULT '111111' COMMENT '密码' not null,
-  type                          TINYINT UNSIGNED DEFAULT 1  COMMENT '类别[0 admin,1 user,2 store]' not null,
+  type                          TINYINT UNSIGNED DEFAULT 1  COMMENT '类别[0 admin, 1 user, 2 store]' not null,
   constraint uq_operator_code unique (code),
   constraint pk_operator primary key (id)
 );
@@ -246,8 +183,6 @@ create table order_detail (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
-  constraint uq_order_detail_code unique (code),
   constraint pk_order_detail primary key (id)
 );
 
@@ -256,8 +191,6 @@ create table order_detail_item (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
-  constraint uq_order_detail_item_code unique (code),
   constraint pk_order_detail_item primary key (id)
 );
 
@@ -266,7 +199,7 @@ create table order_main (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
+  code                          varchar(16) DEFAULT '' COMMENT '流水号' not null,
   constraint uq_order_main_code unique (code),
   constraint pk_order_main primary key (id)
 );
@@ -276,8 +209,6 @@ create table order_package (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
-  constraint uq_order_package_code unique (code),
   constraint pk_order_package primary key (id)
 );
 
@@ -286,8 +217,6 @@ create table order_package_item (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
-  constraint uq_order_package_item_code unique (code),
   constraint pk_order_package_item primary key (id)
 );
 
@@ -296,9 +225,7 @@ create table pack (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   name                          varchar(32) DEFAULT '' COMMENT '套餐名称' not null,
-  constraint uq_pack_code unique (code),
   constraint pk_pack primary key (id)
 );
 
@@ -307,22 +234,12 @@ create table range_merchandise (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  black_white                   CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
+  black_white                   CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单, - 黑名单]' not null,
   activity_id                   bigint COMMENT 'ID',
+  merchandise_type              CHAR(1) DEFAULT 'MM' COMMENT '类别:[MM 商品, MG 标签]' not null,
   merchandise_id                bigint COMMENT 'ID',
-  merchandise_tag_id            bigint COMMENT 'ID',
+  tag                           varchar(32) COMMENT '配置编码',
   constraint pk_range_merchandise primary key (id)
-);
-
-create table range_merchandise_tag (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  black_white                   CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
-  activity_id                   bigint COMMENT 'ID',
-  merchandise_tag_id            bigint COMMENT 'ID',
-  constraint pk_range_merchandise_tag primary key (id)
 );
 
 create table range_user (
@@ -330,21 +247,13 @@ create table range_user (
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  black_white                   CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
+  black_white                   CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单, - 黑名单]' not null,
   activity_id                   bigint COMMENT 'ID',
+  user_type                     CHAR(2) DEFAULT 'UU' COMMENT '类别:[UU 用户, UG 标签, UA 区域, UT 类型]' not null,
   user_id                       bigint COMMENT 'ID',
+  tag                           varchar(32) COMMENT '配置编码',
+  area                          varchar(6) DEFAULT '' COMMENT '区域编码' not null,
   constraint pk_range_user primary key (id)
-);
-
-create table range_user_tag (
-  id                            bigint COMMENT 'ID' auto_increment not null,
-  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
-  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
-  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
-  black_white                   CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单,- 黑名单]' not null,
-  activity_id                   bigint COMMENT 'ID',
-  user_tag_id                   bigint COMMENT 'ID',
-  constraint pk_range_user_tag primary key (id)
 );
 
 create table store (
@@ -407,13 +316,11 @@ create table user (
   create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
   update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
   operator_id                   bigint COMMENT 'ID',
-  code                          varchar(16) DEFAULT '' COMMENT '编码' not null,
   name                          varchar(32) DEFAULT '' COMMENT '名称' not null,
   area                          varchar(6) DEFAULT '' COMMENT '区域编码' not null,
   level                         varchar(32) COMMENT '配置编码',
   type                          varchar(32) COMMENT '配置编码',
   constraint uq_user_operator_id unique (operator_id),
-  constraint uq_user_code unique (code),
   constraint pk_user primary key (id)
 );
 
@@ -457,21 +364,6 @@ create table user_tag (
   constraint pk_user_tag primary key (id)
 );
 
-create index ix_activity_merchandise_activity_id on activity_merchandise (activity_id);
-alter table activity_merchandise add constraint fk_activity_merchandise_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
-
-create index ix_activity_merchandise_merchandise_id on activity_merchandise (merchandise_id);
-alter table activity_merchandise add constraint fk_activity_merchandise_merchandise_id foreign key (merchandise_id) references merchandise (id) on delete restrict on update restrict;
-
-create index ix_activity_merchandise_merchandise_tag_id on activity_merchandise (merchandise_tag_id);
-alter table activity_merchandise add constraint fk_activity_merchandise_merchandise_tag_id foreign key (merchandise_tag_id) references merchandise_tag (id) on delete restrict on update restrict;
-
-create index ix_activity_merchandise_tag_activity_id on activity_merchandise_tag (activity_id);
-alter table activity_merchandise_tag add constraint fk_activity_merchandise_tag_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
-
-create index ix_activity_merchandise_tag_merchandise_tag_id on activity_merchandise_tag (merchandise_tag_id);
-alter table activity_merchandise_tag add constraint fk_activity_merchandise_tag_merchandise_tag_id foreign key (merchandise_tag_id) references merchandise_tag (id) on delete restrict on update restrict;
-
 alter table activity_mj add constraint fk_activity_mj_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
 
 alter table activity_ms add constraint fk_activity_ms_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
@@ -479,21 +371,6 @@ alter table activity_ms add constraint fk_activity_ms_activity_id foreign key (a
 alter table activity_mz add constraint fk_activity_mz_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
 
 alter table activity_q add constraint fk_activity_q_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
-
-create index ix_activity_user_activity_id on activity_user (activity_id);
-alter table activity_user add constraint fk_activity_user_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
-
-create index ix_activity_user_user_id on activity_user (user_id);
-alter table activity_user add constraint fk_activity_user_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
-
-create index ix_activity_user_user_tag_id on activity_user (user_tag_id);
-alter table activity_user add constraint fk_activity_user_user_tag_id foreign key (user_tag_id) references user_tag (id) on delete restrict on update restrict;
-
-create index ix_activity_user_tag_activity_id on activity_user_tag (activity_id);
-alter table activity_user_tag add constraint fk_activity_user_tag_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
-
-create index ix_activity_user_tag_user_tag_id on activity_user_tag (user_tag_id);
-alter table activity_user_tag add constraint fk_activity_user_tag_user_tag_id foreign key (user_tag_id) references user_tag (id) on delete restrict on update restrict;
 
 create index ix_config_parent on config (parent);
 alter table config add constraint fk_config_parent foreign key (parent) references config (code) on delete restrict on update restrict;
@@ -516,14 +393,8 @@ alter table range_merchandise add constraint fk_range_merchandise_activity_id fo
 create index ix_range_merchandise_merchandise_id on range_merchandise (merchandise_id);
 alter table range_merchandise add constraint fk_range_merchandise_merchandise_id foreign key (merchandise_id) references merchandise (id) on delete restrict on update restrict;
 
-create index ix_range_merchandise_merchandise_tag_id on range_merchandise (merchandise_tag_id);
-alter table range_merchandise add constraint fk_range_merchandise_merchandise_tag_id foreign key (merchandise_tag_id) references merchandise_tag (id) on delete restrict on update restrict;
-
-create index ix_range_merchandise_tag_activity_id on range_merchandise_tag (activity_id);
-alter table range_merchandise_tag add constraint fk_range_merchandise_tag_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
-
-create index ix_range_merchandise_tag_merchandise_tag_id on range_merchandise_tag (merchandise_tag_id);
-alter table range_merchandise_tag add constraint fk_range_merchandise_tag_merchandise_tag_id foreign key (merchandise_tag_id) references merchandise_tag (id) on delete restrict on update restrict;
+create index ix_range_merchandise_tag on range_merchandise (tag);
+alter table range_merchandise add constraint fk_range_merchandise_tag foreign key (tag) references config (code) on delete restrict on update restrict;
 
 create index ix_range_user_activity_id on range_user (activity_id);
 alter table range_user add constraint fk_range_user_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
@@ -531,11 +402,8 @@ alter table range_user add constraint fk_range_user_activity_id foreign key (act
 create index ix_range_user_user_id on range_user (user_id);
 alter table range_user add constraint fk_range_user_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
-create index ix_range_user_tag_activity_id on range_user_tag (activity_id);
-alter table range_user_tag add constraint fk_range_user_tag_activity_id foreign key (activity_id) references activity (id) on delete restrict on update restrict;
-
-create index ix_range_user_tag_user_tag_id on range_user_tag (user_tag_id);
-alter table range_user_tag add constraint fk_range_user_tag_user_tag_id foreign key (user_tag_id) references user_tag (id) on delete restrict on update restrict;
+create index ix_range_user_tag on range_user (tag);
+alter table range_user add constraint fk_range_user_tag foreign key (tag) references config (code) on delete restrict on update restrict;
 
 alter table store add constraint fk_store_operator_id foreign key (operator_id) references operator (id) on delete restrict on update restrict;
 
@@ -598,21 +466,6 @@ alter table user_tag add constraint fk_user_tag_tag foreign key (tag) references
 
 # --- !Downs
 
-alter table activity_merchandise drop foreign key fk_activity_merchandise_activity_id;
-drop index ix_activity_merchandise_activity_id on activity_merchandise;
-
-alter table activity_merchandise drop foreign key fk_activity_merchandise_merchandise_id;
-drop index ix_activity_merchandise_merchandise_id on activity_merchandise;
-
-alter table activity_merchandise drop foreign key fk_activity_merchandise_merchandise_tag_id;
-drop index ix_activity_merchandise_merchandise_tag_id on activity_merchandise;
-
-alter table activity_merchandise_tag drop foreign key fk_activity_merchandise_tag_activity_id;
-drop index ix_activity_merchandise_tag_activity_id on activity_merchandise_tag;
-
-alter table activity_merchandise_tag drop foreign key fk_activity_merchandise_tag_merchandise_tag_id;
-drop index ix_activity_merchandise_tag_merchandise_tag_id on activity_merchandise_tag;
-
 alter table activity_mj drop foreign key fk_activity_mj_activity_id;
 
 alter table activity_ms drop foreign key fk_activity_ms_activity_id;
@@ -620,21 +473,6 @@ alter table activity_ms drop foreign key fk_activity_ms_activity_id;
 alter table activity_mz drop foreign key fk_activity_mz_activity_id;
 
 alter table activity_q drop foreign key fk_activity_q_activity_id;
-
-alter table activity_user drop foreign key fk_activity_user_activity_id;
-drop index ix_activity_user_activity_id on activity_user;
-
-alter table activity_user drop foreign key fk_activity_user_user_id;
-drop index ix_activity_user_user_id on activity_user;
-
-alter table activity_user drop foreign key fk_activity_user_user_tag_id;
-drop index ix_activity_user_user_tag_id on activity_user;
-
-alter table activity_user_tag drop foreign key fk_activity_user_tag_activity_id;
-drop index ix_activity_user_tag_activity_id on activity_user_tag;
-
-alter table activity_user_tag drop foreign key fk_activity_user_tag_user_tag_id;
-drop index ix_activity_user_tag_user_tag_id on activity_user_tag;
 
 alter table config drop foreign key fk_config_parent;
 drop index ix_config_parent on config;
@@ -657,14 +495,8 @@ drop index ix_range_merchandise_activity_id on range_merchandise;
 alter table range_merchandise drop foreign key fk_range_merchandise_merchandise_id;
 drop index ix_range_merchandise_merchandise_id on range_merchandise;
 
-alter table range_merchandise drop foreign key fk_range_merchandise_merchandise_tag_id;
-drop index ix_range_merchandise_merchandise_tag_id on range_merchandise;
-
-alter table range_merchandise_tag drop foreign key fk_range_merchandise_tag_activity_id;
-drop index ix_range_merchandise_tag_activity_id on range_merchandise_tag;
-
-alter table range_merchandise_tag drop foreign key fk_range_merchandise_tag_merchandise_tag_id;
-drop index ix_range_merchandise_tag_merchandise_tag_id on range_merchandise_tag;
+alter table range_merchandise drop foreign key fk_range_merchandise_tag;
+drop index ix_range_merchandise_tag on range_merchandise;
 
 alter table range_user drop foreign key fk_range_user_activity_id;
 drop index ix_range_user_activity_id on range_user;
@@ -672,11 +504,8 @@ drop index ix_range_user_activity_id on range_user;
 alter table range_user drop foreign key fk_range_user_user_id;
 drop index ix_range_user_user_id on range_user;
 
-alter table range_user_tag drop foreign key fk_range_user_tag_activity_id;
-drop index ix_range_user_tag_activity_id on range_user_tag;
-
-alter table range_user_tag drop foreign key fk_range_user_tag_user_tag_id;
-drop index ix_range_user_tag_user_tag_id on range_user_tag;
+alter table range_user drop foreign key fk_range_user_tag;
+drop index ix_range_user_tag on range_user;
 
 alter table store drop foreign key fk_store_operator_id;
 
@@ -738,10 +567,6 @@ drop index ix_user_tag_tag on user_tag;
 
 drop table if exists activity;
 
-drop table if exists activity_merchandise;
-
-drop table if exists activity_merchandise_tag;
-
 drop table if exists activity_mj;
 
 drop table if exists activity_ms;
@@ -749,10 +574,6 @@ drop table if exists activity_ms;
 drop table if exists activity_mz;
 
 drop table if exists activity_q;
-
-drop table if exists activity_user;
-
-drop table if exists activity_user_tag;
 
 drop table if exists address;
 
@@ -782,11 +603,7 @@ drop table if exists pack;
 
 drop table if exists range_merchandise;
 
-drop table if exists range_merchandise_tag;
-
 drop table if exists range_user;
-
-drop table if exists range_user_tag;
 
 drop table if exists store;
 

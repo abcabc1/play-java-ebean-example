@@ -1,50 +1,56 @@
 package controllers.ecommerce;
 
 import models.ecommerce.promotion.Activity;
+import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import service.ecommerce.sale.SaleService;
-import utils.bean.BeanUtil;
 import utils.http.RequestUtil;
 import utils.http.ResultUtil;
 
 import javax.inject.Inject;
 import java.util.List;
-
-import static utils.Constant.Cache4RedisKey;
+import java.util.concurrent.CompletionStage;
 
 public class ActivityController extends Controller {
 
+    private final HttpExecutionContext httpExecutionContext;
     private final SaleService saleService;
 
     @Inject
-    public ActivityController(SaleService saleService) {
+    public ActivityController(HttpExecutionContext httpExecutionContext, SaleService saleService) {
+        this.httpExecutionContext = httpExecutionContext;
         this.saleService = saleService;
     }
 
-    public Result getActivity(Http.Request request) {
-        List<String> codes = RequestUtil.getRequestJsonArray(request, "models", String.class);
-        return ResultUtil.success(Cache4RedisKey, saleService.getActivity(codes));
+    public CompletionStage<Result> getActivity(Http.Request request) {
+        List<String> ids = RequestUtil.getRequestJsonArray(request, "models", String.class);
+        return saleService.getActivity(ids).thenApplyAsync(v->ResultUtil.success("activity", v),
+        httpExecutionContext.current());
     }
 
     public Result removeActivity(Http.Request request) {
-        List<String> codes = RequestUtil.getRequestJsonArray(request, "models", String.class);
-        saleService.removeActivity(codes);
-        return ResultUtil.success(Cache4RedisKey, saleService.getActivity(codes));
+//        List<Long> ids = BeanUtil.cast(RequestUtil.getRequestJsonArray(request, "models", String.class));
+//        saleService.removeActivity(ids);
+//        return ResultUtil.success(Cache4RedisKey, saleService.getActivity(ids));
+        return ok();
     }
 
-    public Result setActivity(Http.Request request) {
+    public CompletionStage<Result> setActivity(Http.Request request) {
         List<Activity> activityList = RequestUtil.getRequestJsonArray(request, "models", Activity.class);
-        saleService.setActivity(activityList);
-        List<String> codes = BeanUtil.cast(activityList.stream().map(value -> value.code));
-        return ResultUtil.success(Cache4RedisKey, saleService.getActivity(codes));
+        return saleService.setActivity(activityList)
+                .thenApplyAsync(
+                        v -> ResultUtil.success("activity", v.toList()),
+                        httpExecutionContext.current());
     }
 
     public Result refreshActivity(Http.Request request) {
-        List<Activity> activityList = RequestUtil.getRequestJsonArray(request, "models", Activity.class);
-        saleService.refreshActivity(activityList);
-        List<String> codes = BeanUtil.cast(activityList.stream().map(value -> value.code));
-        return ResultUtil.success(Cache4RedisKey, saleService.getActivity(codes));
+//        List<Activity> activityList = RequestUtil.getRequestJsonArray(request, "models", Activity.class);
+//        saleService.refreshActivity(activityList);
+//        List<Long> ids = activityList.stream().map(value -> value.id).collect(Collectors.toList());
+//        ;
+//        return ResultUtil.success(Cache4RedisKey, saleService.getActivity(ids));
+        return ok();
     }
 }

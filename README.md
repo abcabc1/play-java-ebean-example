@@ -32,3 +32,11 @@ words 学习平台
 
 graphql
 
+	Trait	Language	Blocking	Features
+1.	play.api.cache.redis.CacheApi	Scala	blocking	advanced
+2.	play.api.cache.redis.CacheAsyncApi	Scala	non-blocking	advanced
+3.	play.cache.redis.AsyncCacheApi	Java	non-blocking	advanced
+4.	play.api.cache.SyncCacheApi	Scala	blocking	basic
+5.	play.api.cache.AsyncCacheApi	Scala	non-blocking	basic
+6.	play.cache.SyncCacheApi	Java	blocking	basic
+7.	play.cache.AsyncCacheApi	Java	non-blocking	basic

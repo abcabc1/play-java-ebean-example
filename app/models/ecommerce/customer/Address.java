@@ -13,8 +13,8 @@ public class Address extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '' COMMENT '详细'")
+    public String detail;
 
     public static final Finder<Long, Address> find = new Finder<>(Address.class, "ecommerce");
 

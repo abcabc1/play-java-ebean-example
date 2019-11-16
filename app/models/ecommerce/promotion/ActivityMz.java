@@ -2,20 +2,15 @@ package models.ecommerce.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.base.BasicSimpleModel;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table
-public class ActivityMz extends BasicModel {
+public class ActivityMz extends BasicSimpleModel {
 
     private static final long serialVersionUID = 1L;
-
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
 
     @OneToOne
     public Activity activity;

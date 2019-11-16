@@ -22,7 +22,7 @@ public class StoreLicense extends BasicModel {
     @JoinColumn(name = "license")
     public Config license;
 
-    public static final Finder<Long, StoreLicense> find = new Finder<>(StoreLicense.class, "default");
+    public static final Finder<Long, StoreLicense> find = new Finder<>(StoreLicense.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

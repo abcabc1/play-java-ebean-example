@@ -19,7 +19,7 @@ public class StoreUser extends BasicModel {
     @ManyToOne
     public User user;
 
-    public static final Finder<Long, StoreUser> find = new Finder<>(StoreUser.class, "default");
+    public static final Finder<Long, StoreUser> find = new Finder<>(StoreUser.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

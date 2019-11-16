@@ -5,19 +5,14 @@ import io.ebean.Finder;
 import models.base.BasicModel;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table
 public class Activity extends BasicModel {
 
     private static final long serialVersionUID = 1L;
-
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
     public String name;
@@ -50,44 +45,42 @@ public class Activity extends BasicModel {
 
     @OneToMany
     public List<RangeMerchandise> rangeMerchandiseList;
-    @OneToMany
-    public List<RangeMerchandiseTag> rangeMerchandiseTagList;
+
     @OneToMany
     public List<RangeUser> rangeUserList;
-    @OneToMany
-    public List<RangeUserTag> rangeUserTagList;
 
     public Set<String> build() {
-        Set<String> value = new HashSet<>();
-        for (RangeMerchandise rangeMerchandise : this.rangeMerchandiseList) {
-            value.add(buildActivityMerchandise(rangeMerchandise));
+        Set<String> rangeSet = new HashSet<>();
+        List<String> rangeMerchandiseValueList =  rangeMerchandiseList.stream().map(v->buildActivityMerchandise(v)).collect(Collectors.toList());
+        List<String> rangeUserValueList =  rangeUserList.stream().map(v->buildActivityUser(v)).collect(Collectors.toList());
+        for (String rangeMerchandiseValue: rangeMerchandiseValueList) {
+            for (String rangeUserValue: rangeUserValueList) {
+                rangeSet.add(rangeMerchandiseValue+"|"+rangeUserValue);
+            }
         }
-        for (RangeMerchandiseTag rangeMerchandiseTag : this.rangeMerchandiseTagList) {
-            value.add(buildActivityMerchandiseTag(rangeMerchandiseTag));
-        }
-        for (RangeUser rangeUser : this.rangeUserList) {
-            value.add(buildActivityUser(rangeUser));
-        }
-        for (RangeUserTag rangeUserTag : this.rangeUserTagList) {
-            value.add(buildActivityUserTag(rangeUserTag));
-        }
-        return value;
-    }
-
-    public static String buildActivityUserTag(RangeUserTag rangeUserTag) {
-        return rangeUserTag.blackWhite + "UT" + rangeUserTag.id;
+        return rangeSet;
     }
 
     public static String buildActivityUser(RangeUser rangeUser) {
-        return rangeUser.blackWhite + "U" + rangeUser.id;
-    }
-
-    public static String buildActivityMerchandiseTag(RangeMerchandiseTag rangeMerchandiseTag) {
-        return rangeMerchandiseTag.blackWhite + "MT" + rangeMerchandiseTag.id;
+        String code = "";
+        switch (rangeUser.userType) {
+            case "UU": code = rangeUser.user.id.toString(); break;
+            case "UG": code = rangeUser.tag.code; break;
+            case "UA": code = rangeUser.area; break;
+            case "UT": code = rangeUser.user.type.code; break;
+            default: break;
+        }
+        return rangeUser.blackWhite + rangeUser.userType + code;
     }
 
     public static String buildActivityMerchandise(RangeMerchandise rangeMerchandise) {
-        return rangeMerchandise.blackWhite + "M" + rangeMerchandise.id;
+        String code = "";
+        switch (rangeMerchandise.merchandiseType) {
+            case "MM": code = rangeMerchandise.merchandise.id.toString(); break;
+            case "MG": code = rangeMerchandise.tag.code; break;
+            default: break;
+        }
+        return rangeMerchandise.blackWhite + rangeMerchandise.merchandiseType + code;
     }
 
 
@@ -118,7 +111,7 @@ public class Activity extends BasicModel {
 
     private enum LabelBrief {
 
-        Merchandise("M"), MerchandiseTag("MT"), User("U"), UserTag("UT");
+        Merchandise("MM"), MerchandiseTag("MG"), User("UU"), UserTag("UG"), UserArea("UA"), UserType("UT");
 
         private String value;
 

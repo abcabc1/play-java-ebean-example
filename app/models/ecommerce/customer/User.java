@@ -16,9 +16,6 @@ public class User extends BasicModel {
     @OneToOne
     public Operator operator;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
-
     @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
     public String name;
 

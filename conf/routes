@@ -3,42 +3,53 @@
 # ~~~~
 
 # Default path will just redirect to the computer list
-GET         /computers/main              controllers.example.MainController.index()
+GET         /computers/main                controllers.example.MainController.index()
 
 # Computers list (look at the default values for pagination parameters)
-GET         /computers                   controllers.example.MainController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET         /computers                     controllers.example.MainController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 
 # Add computer
-GET         /computers/new               controllers.example.MainController.create(request: Request)
-POST        /computers                   controllers.example.MainController.save(request: Request)
+GET         /computers/new                 controllers.example.MainController.create(request: Request)
+POST        /computers                     controllers.example.MainController.save(request: Request)
 
 # Edit existing computer
-GET         /computers/:id               controllers.example.MainController.edit(request: Request, id:Long)
-POST        /computers/:id               controllers.example.MainController.update(request: Request, id:Long)
+GET         /computers/:id                 controllers.example.MainController.edit(request: Request, id:Long)
+POST        /computers/:id                 controllers.example.MainController.update(request: Request, id:Long)
 
 # Delete a computer
-POST        /computers/:id/delete        controllers.example.MainController.delete(id:Long)
+POST        /computers/:id/delete          controllers.example.MainController.delete(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                controllers.Assets.at(path="/public", file)
+GET         /assets/*file                  controllers.Assets.at(path="/public", file)
 
-POST        /words/wordsService          controllers.words.WordsController.testService(request: Request)
+POST        /words/wordsService            controllers.words.WordsController.testService(request: Request)
 # extract wordEn from dict.cn
-POST        /words/dict2Db               controllers.words.WordsController.dict2Db(request: Request)
+POST        /words/dict2Db                 controllers.words.WordsController.dict2Db(request: Request)
 # add relation between listen and wordEn
-POST        /words/listen2Word           controllers.words.WordsController.listen2Word(request: Request)
+POST        /words/listen2Word             controllers.words.WordsController.listen2Word(request: Request)
 # make up Chinese wordEn with Pinyin
-POST        /words/trans2Py              controllers.words.WordsController.trans2Py(request: Request)
-POST        /words/testTime              controllers.words.WordsController.testTime(request: Request)
+POST        /words/trans2Py                controllers.words.WordsController.trans2Py(request: Request)
+POST        /words/testTime                controllers.words.WordsController.testTime(request: Request)
+
+POST        /play/setCache                 controllers.iplay.CacheController.setCache(request: Request)
+POST        /play/getCache                 controllers.iplay.CacheController.getCache(request: Request)
+POST        /play/removeCache              controllers.iplay.CacheController.removeCache(request: Request)
+POST        /play/setAsyncCache            controllers.iplay.CacheController.setAsyncCache(request: Request)
+POST        /play/getAsyncCache            controllers.iplay.CacheController.getAsyncCache(request: Request)
+POST        /play/removeAsyncCache         controllers.iplay.CacheController.removeAsyncCache(request: Request)
+POST        /play/setAsyncCacheList        controllers.iplay.CacheController.setAsyncCacheList(request: Request)
+POST        /play/getAsyncCacheList        controllers.iplay.CacheController.getAsyncCacheList(request: Request)
+POST        /play/getAsyncCaches           controllers.iplay.CacheController.getAsyncCaches(request: Request)
+#POST /play/setCache controllers.iplay.CacheController.setCache(request: Request)
 
 + nocsrf
-GET         /graphiql                    controllers.graphql.GraphiQLController.index
+GET         /graphiql                      controllers.graphql.GraphiQLController.index
 + nocsrf
-GET         /graphql                     controllers.graphql.GraphQLController.index
+GET         /graphql                       controllers.graphql.GraphQLController.index
 + nocsrf
-POST        /graphql                     controllers.graphql.GraphQLController.query(request: Request)
+POST        /graphql                       controllers.graphql.GraphQLController.query(request: Request)
 
-POST        /removeActivity              controllers.ecommerce.ActivityController.removeActivity(request: Request)
-POST        /setActivity                 controllers.ecommerce.ActivityController.setActivity(request: Request)
-POST        /refreshActivity             controllers.ecommerce.ActivityController.refreshActivity(request: Request)
-POST        /getActivity                 controllers.ecommerce.ActivityController.getActivity(request: Request)
+POST        /removeActivity                controllers.ecommerce.ActivityController.removeActivity(request: Request)
+POST        /setActivity                   controllers.ecommerce.ActivityController.setActivity(request: Request)
+POST        /refreshActivity               controllers.ecommerce.ActivityController.refreshActivity(request: Request)
+POST        /getActivity                   controllers.ecommerce.ActivityController.getActivity(request: Request)

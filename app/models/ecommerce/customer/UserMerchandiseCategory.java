@@ -22,7 +22,7 @@ public class UserMerchandiseCategory extends BasicModel {
     @JoinColumn(name = "merchandise_category")
     public Config merchandiseCategory;
 
-    public static final Finder<Long, UserMerchandiseCategory> find = new Finder<>(UserMerchandiseCategory.class, "default");
+    public static final Finder<Long, UserMerchandiseCategory> find = new Finder<>(UserMerchandiseCategory.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

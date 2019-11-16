@@ -13,7 +13,7 @@ public class OrderMain extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '流水号'")
     public String code;
 
     public static final Finder<Long, OrderMain> find = new Finder<>(OrderMain.class, "ecommerce");

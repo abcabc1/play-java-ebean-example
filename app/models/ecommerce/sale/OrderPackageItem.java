@@ -13,9 +13,6 @@ public class OrderPackageItem extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
-    public String code;
-
     public static final Finder<Long, OrderPackageItem> find = new Finder<>(OrderPackageItem.class, "ecommerce");
 
 /*

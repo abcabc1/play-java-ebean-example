@@ -20,7 +20,7 @@ public class UserLicense extends BasicModel {
     @ManyToOne
     public Config license;
 
-    public static final Finder<Long, UserLicense> find = new Finder<>(UserLicense.class, "default");
+    public static final Finder<Long, UserLicense> find = new Finder<>(UserLicense.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

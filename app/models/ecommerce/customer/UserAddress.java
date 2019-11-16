@@ -19,7 +19,7 @@ public class UserAddress extends BasicModel {
     @ManyToOne
     public Address address;
 
-    public static final Finder<Long, UserAddress> find = new Finder<>(UserAddress.class, "default");
+    public static final Finder<Long, UserAddress> find = new Finder<>(UserAddress.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

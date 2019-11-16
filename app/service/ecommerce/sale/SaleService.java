@@ -3,12 +3,15 @@ package service.ecommerce.sale;
 import models.ecommerce.promotion.Activity;
 import play.cache.SyncCacheApi;
 import play.cache.redis.AsyncCacheApi;
-import utils.bean.BeanUtil;
+import play.cache.redis.AsyncRedisList;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 import static utils.Constant.Cache4RedisKey;
 import static utils.Constant.Cache4RedisValue;
@@ -24,23 +27,23 @@ public class SaleService {
         this.cache = cache;
     }
 
-    public void setActivity(List<Activity> activityList) {
-        for(Activity activity : activityList) {
+    public CompletionStage<AsyncRedisList<String>> setActivity(List<Activity> activityList) {
+        CompletionStage<AsyncRedisList<String>> list = null;
+        for (Activity activity : activityList) {
             Set<String> set = activity.build();
-            cache.set(activity.code, set);
-//            for (RangeMerchandise rangeMerchandise: activityView.rangeMerchandiseList) {
-//                String value = ActivityView.buildActivityMerchandise(rangeMerchandise);
-//                cache.set(activityView.activity.code, value);
-//            }
+            for (String value : set) {
+                list  = asyncCache.list(activity.id.toString(), String.class).append(value);
+            }
         }
+        return list;
     }
 
     public void setActivityAll() {
 
     }
 
-    public void removeActivity(List<String> codes) {
-        for(String code: codes) {
+    public void removeActivity(List<Long> ids) {
+        for (Long id : ids) {
             cache.remove(Cache4RedisKey);
         }
     }
@@ -49,12 +52,19 @@ public class SaleService {
 
     }
 
-    public List<String> getActivity(List<String> codes) {
-        List<String> list = new ArrayList<>();
-        for(String code: codes) {
-            list.add((String) cache.getOptional(code).orElse(""));
-        }
-        return list;
+    public CompletionStage<List<Optional<String>>> getActivity(List<String> ids) {
+//        cache.getOptional("1");
+//        return asyncCache.getOptional("1").thenApplyAsync(Optional::get);
+        return asyncCache.getAll(String.class, ids);
+//        List<String> list = new ArrayList<>();
+//        return CompletableFuture.supplyAsync(
+//                () -> {
+//                    for (Long id : ids) {
+//                        asyncCache.list(id.toString(), String.class).toList().thenApply(v -> list.addAll(v));
+//                    }
+//                    return list;
+//                }
+//        );
     }
 
     public List<String> getActivityAll() {
@@ -63,7 +73,7 @@ public class SaleService {
     }
 
     public void logActivity(List<String> codes) {
-        for(String code: codes) {
+        for (String code : codes) {
             System.out.println(cache.getOptional(code).orElse(""));
         }
     }
@@ -72,7 +82,7 @@ public class SaleService {
     }
 
     public void getOrUpdateActivity(List<Activity> activityList) {
-        for(Activity activityView: activityList) {
+        for (Activity activityView : activityList) {
             System.out.println(cache.getOrElseUpdate(Cache4RedisKey, () -> Cache4RedisValue));
         }
     }
@@ -82,10 +92,10 @@ public class SaleService {
     }
 
     public void refreshActivity(List<Activity> activityList) {
-        List<String> list = BeanUtil.cast(activityList.stream().map(value -> value.code));
+        List<Long> list = activityList.stream().map(value -> value.id).collect(Collectors.toList());
         removeActivity(list);
 //        setActivity(activityViewList);
-        getActivity(list);
+//        getActivity(list);
     }
 
     public void refreshActivityAll() {
