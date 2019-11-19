@@ -14,8 +14,8 @@ public class RangeUser extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单, - 黑名单]'")
-    public String blackWhite;
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT -1 COMMENT '黑白名单:[+ 白名单, - 黑名单]'")
+    public boolean blackWhite;
 
     @ManyToOne
     public Activity activity;
@@ -32,6 +32,9 @@ public class RangeUser extends BasicModel {
 
     @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
     public String area;
+
+    @Transient
+    public String code;
 
     public static final Finder<Long, RangeUser> find = new Finder<>(RangeUser.class, "ecommerce");
 

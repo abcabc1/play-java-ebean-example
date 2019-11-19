@@ -14,8 +14,8 @@ public class RangeMerchandise extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT '+' COMMENT '黑白名单:[+ 白名单, - 黑名单]'")
-    public String blackWhite;
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT -1 COMMENT '黑白名单:[+ 白名单, - 黑名单]'")
+    public boolean blackWhite;
 
     @ManyToOne
     public Activity activity;
@@ -29,6 +29,9 @@ public class RangeMerchandise extends BasicModel {
     @ManyToOne
     @JoinColumn(name = "tag")
     public Config tag;
+
+    @Transient
+    public String code;
 
     public static final Finder<Long, RangeMerchandise> find = new Finder<>(RangeMerchandise.class, "ecommerce");
 

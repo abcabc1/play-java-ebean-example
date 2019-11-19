@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 public class RequestUtil {
 
-    public static <A> List<A> getRequestJsonArray(Http.Request request, String object, Class<A> objectClass) {
+    public static <A> List<A> getRequestJsonList(Http.Request request, String object, Class<A> objectClass) {
         JsonNode jsonNode = resolveNode(request, object);
         List<A> list = new ArrayList<>();
         if (jsonNode.isArray()) {

@@ -1,15 +1,19 @@
 package service.ecommerce.sale;
 
+import models.ecommerce.customer.User;
+import models.ecommerce.merchandise.Merchandise;
 import models.ecommerce.promotion.Activity;
+import models.ecommerce.promotion.RangeMerchandise;
+import models.ecommerce.promotion.RangeUser;
+import models.iplay.view.CacheView;
 import play.cache.SyncCacheApi;
 import play.cache.redis.AsyncCacheApi;
-import play.cache.redis.AsyncRedisList;
+import utils.maths.CalculatorUtils;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
@@ -27,17 +31,6 @@ public class SaleService {
         this.cache = cache;
     }
 
-    public CompletionStage<AsyncRedisList<String>> setActivity(List<Activity> activityList) {
-        CompletionStage<AsyncRedisList<String>> list = null;
-        for (Activity activity : activityList) {
-            Set<String> set = activity.build();
-            for (String value : set) {
-                list  = asyncCache.list(activity.id.toString(), String.class).append(value);
-            }
-        }
-        return list;
-    }
-
     public void setActivityAll() {
 
     }
@@ -53,18 +46,7 @@ public class SaleService {
     }
 
     public CompletionStage<List<Optional<String>>> getActivity(List<String> ids) {
-//        cache.getOptional("1");
-//        return asyncCache.getOptional("1").thenApplyAsync(Optional::get);
         return asyncCache.getAll(String.class, ids);
-//        List<String> list = new ArrayList<>();
-//        return CompletableFuture.supplyAsync(
-//                () -> {
-//                    for (Long id : ids) {
-//                        asyncCache.list(id.toString(), String.class).toList().thenApply(v -> list.addAll(v));
-//                    }
-//                    return list;
-//                }
-//        );
     }
 
     public List<String> getActivityAll() {
@@ -102,5 +84,74 @@ public class SaleService {
         removeActivityAll();
         setActivityAll();
         logActivityAll();
+    }
+
+    public List<String> getActivityKeysByRange(List<Merchandise> merchandiseList, List<User> userList) {
+        List<String> keys = new ArrayList<>();
+        for (Merchandise merchandise : merchandiseList) {
+            for (User user : userList) {
+                keys.add("+" + merchandise.id + "|" + user.id);
+                keys.add("-" + merchandise.id + "|" + user.id);
+            }
+        }
+        return keys;
+    }
+
+    public List<CacheView> buildCacheView(Activity activity) {
+        List<CacheView> cacheViewList = new ArrayList<>();
+        String key = buildCacheKey(activity);
+        buildActivityMerchandise(activity);
+        buildActivityUser(activity);
+        for (RangeMerchandise rangeMerchandise : activity.rangeMerchandiseList) {
+            for (RangeUser rangeUser : activity.rangeUserList) {
+                CacheView cacheView = new CacheView();
+                cacheView.key = key;
+                cacheView.value = (CalculatorUtils.getBooleanResult(rangeMerchandise.blackWhite, rangeUser.blackWhite) ? "+" : "-") + rangeMerchandise.merchandiseType + rangeMerchandise.code + "|" + rangeUser.userType + rangeUser.code;
+                cacheViewList.add(cacheView);
+            }
+        }
+        return cacheViewList;
+    }
+
+    private void buildActivityUser(Activity activity) {
+        for (RangeUser rangeUser : activity.rangeUserList) {
+            switch (rangeUser.userType) {
+                case "UU":
+                    rangeUser.code = rangeUser.user.id.toString();
+                    break;
+                case "UG":
+                    rangeUser.code = rangeUser.tag.code;
+                    break;
+                case "UA":
+                    rangeUser.code = rangeUser.area;
+                    break;
+                case "UT":
+                    rangeUser.code = rangeUser.user.type.code;
+                    break;
+                default:
+                    rangeUser.code = "";
+                    break;
+            }
+        }
+    }
+
+    private void buildActivityMerchandise(Activity activity) {
+        for (RangeMerchandise rangeMerchandise : activity.rangeMerchandiseList) {
+            switch (rangeMerchandise.merchandiseType) {
+                case "MM":
+                    rangeMerchandise.code = rangeMerchandise.merchandise.id.toString();
+                    break;
+                case "MG":
+                    rangeMerchandise.code = rangeMerchandise.tag.code;
+                    break;
+                default:
+                    rangeMerchandise.code = "";
+                    break;
+            }
+        }
+    }
+
+    private String buildCacheKey(Activity activity) {
+        return activity.id.toString();
     }
 }

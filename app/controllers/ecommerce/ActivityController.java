@@ -1,48 +1,63 @@
 package controllers.ecommerce;
 
+import models.ecommerce.customer.User;
+import models.ecommerce.merchandise.Merchandise;
 import models.ecommerce.promotion.Activity;
+import models.ecommerce.promotion.RangeMerchandise;
+import models.ecommerce.promotion.RangeUser;
+import models.iplay.view.CacheView;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import service.common.CacheService;
 import service.ecommerce.sale.SaleService;
 import utils.http.RequestUtil;
 import utils.http.ResultUtil;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 public class ActivityController extends Controller {
 
     private final HttpExecutionContext httpExecutionContext;
     private final SaleService saleService;
+    private final CacheService cacheService;
 
     @Inject
-    public ActivityController(HttpExecutionContext httpExecutionContext, SaleService saleService) {
+    public ActivityController(HttpExecutionContext httpExecutionContext, SaleService saleService, CacheService cacheService) {
         this.httpExecutionContext = httpExecutionContext;
         this.saleService = saleService;
+        this.cacheService = cacheService;
+    }
+
+    public CompletionStage<Result> getActivityByRange(Http.Request request) {
+        List<Merchandise> merchandiseList = RequestUtil.getRequestJsonList(request, "models", Merchandise.class);
+        List<User> userList = RequestUtil.getRequestJsonList(request, "models", User.class);
+        List<String> stringList = saleService.getActivityKeysByRange(merchandiseList, userList);
+        return cacheService.getAsyncList(stringList).thenApply(v -> ResultUtil.success("cache", v.stream().flatMap(Collection::stream).collect(Collectors.toList())));
     }
 
     public CompletionStage<Result> getActivity(Http.Request request) {
-        List<String> ids = RequestUtil.getRequestJsonArray(request, "models", String.class);
-        return saleService.getActivity(ids).thenApplyAsync(v->ResultUtil.success("activity", v),
-        httpExecutionContext.current());
+        List<String> models = RequestUtil.getRequestJsonList(request, "models", String.class);
+        return cacheService.getAsyncList(models).thenApply(v -> ResultUtil.success("cache", v.stream().flatMap(Collection::stream).collect(Collectors.toList())));
+//        return cacheService.getAsyncList(models).thenApplyAsync(v -> ResultUtil.success("cache", v.stream().flatMap(Collection::stream).collect(Collectors.toList())), httpExecutionContext.current());
     }
 
     public Result removeActivity(Http.Request request) {
-//        List<Long> ids = BeanUtil.cast(RequestUtil.getRequestJsonArray(request, "models", String.class));
-//        saleService.removeActivity(ids);
-//        return ResultUtil.success(Cache4RedisKey, saleService.getActivity(ids));
-        return ok();
+        List<CacheView> models = RequestUtil.getRequestJsonList(request, "models", CacheView.class);
+        cacheService.removeAsyncList(models);
+        return ResultUtil.success();
     }
 
-    public CompletionStage<Result> setActivity(Http.Request request) {
-        List<Activity> activityList = RequestUtil.getRequestJsonArray(request, "models", Activity.class);
-        return saleService.setActivity(activityList)
-                .thenApplyAsync(
-                        v -> ResultUtil.success("activity", v.toList()),
-                        httpExecutionContext.current());
+    public Result setActivity(Http.Request request) {
+        List<Activity> models = RequestUtil.getRequestJsonList(request, "models", Activity.class);
+        List<CacheView> cacheViewList = models.stream().map(saleService::buildCacheView).flatMap(Collection::stream).collect(Collectors.toList());
+        cacheService.setAsyncList(cacheViewList);
+        return ResultUtil.success();
     }
 
     public Result refreshActivity(Http.Request request) {

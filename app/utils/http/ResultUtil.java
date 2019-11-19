@@ -85,7 +85,7 @@ public class ResultUtil {
             if (o[i] == null) {
                 continue;
             }
-            map.put(keys[i].trim(), o[i]);
+            map.put(keys[i].trim(), o[i].toString());
         }
         ObjectMapper objectMapper = new ObjectMapper();
         if (ignoreNull) {

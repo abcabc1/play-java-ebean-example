@@ -3,10 +3,13 @@ package models.ecommerce.promotion;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.iplay.view.CacheView;
+import utils.maths.CalculatorUtils;
 
 import javax.persistence.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table
@@ -49,40 +52,17 @@ public class Activity extends BasicModel {
     @OneToMany
     public List<RangeUser> rangeUserList;
 
-    public Set<String> build() {
-        Set<String> rangeSet = new HashSet<>();
-        List<String> rangeMerchandiseValueList =  rangeMerchandiseList.stream().map(v->buildActivityMerchandise(v)).collect(Collectors.toList());
-        List<String> rangeUserValueList =  rangeUserList.stream().map(v->buildActivityUser(v)).collect(Collectors.toList());
-        for (String rangeMerchandiseValue: rangeMerchandiseValueList) {
-            for (String rangeUserValue: rangeUserValueList) {
-                rangeSet.add(rangeMerchandiseValue+"|"+rangeUserValue);
-            }
-        }
-        return rangeSet;
-    }
-
-    public static String buildActivityUser(RangeUser rangeUser) {
-        String code = "";
-        switch (rangeUser.userType) {
-            case "UU": code = rangeUser.user.id.toString(); break;
-            case "UG": code = rangeUser.tag.code; break;
-            case "UA": code = rangeUser.area; break;
-            case "UT": code = rangeUser.user.type.code; break;
-            default: break;
-        }
-        return rangeUser.blackWhite + rangeUser.userType + code;
-    }
-
-    public static String buildActivityMerchandise(RangeMerchandise rangeMerchandise) {
-        String code = "";
-        switch (rangeMerchandise.merchandiseType) {
-            case "MM": code = rangeMerchandise.merchandise.id.toString(); break;
-            case "MG": code = rangeMerchandise.tag.code; break;
-            default: break;
-        }
-        return rangeMerchandise.blackWhite + rangeMerchandise.merchandiseType + code;
-    }
-
+//    public Set<String> build() {
+//        Set<String> rangeSet = new HashSet<>();
+//        List<String> rangeMerchandiseValueList = rangeMerchandiseList.stream().map(v -> buildActivityMerchandise(v)).collect(Collectors.toList());
+//        List<String> rangeUserValueList = rangeUserList.stream().map(v -> buildActivityUser(v)).collect(Collectors.toList());
+//        for (String rangeMerchandiseValue : rangeMerchandiseValueList) {
+//            for (String rangeUserValue : rangeUserValueList) {
+//                rangeSet.add(rangeMerchandiseValue + "|" + rangeUserValue);
+//            }
+//        }
+//        return rangeSet;
+//    }
 
     public static final Finder<Long, Activity> find = new Finder<>(Activity.class, "ecommerce");
 
