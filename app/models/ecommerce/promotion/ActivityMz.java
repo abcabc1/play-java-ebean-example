@@ -1,10 +1,11 @@
 package models.ecommerce.promotion;
 
 import io.ebean.Finder;
-import models.base.BasicModel;
 import models.base.BasicSimpleModel;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table

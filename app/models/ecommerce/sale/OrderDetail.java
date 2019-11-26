@@ -3,7 +3,6 @@ package models.ecommerce.sale;
 import io.ebean.Finder;
 import models.base.BasicModel;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 

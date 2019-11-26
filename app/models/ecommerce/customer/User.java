@@ -19,16 +19,9 @@ public class User extends BasicModel {
     @Column(nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '' COMMENT '名称'")
     public String name;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
-    public String area;
-
     @ManyToOne
     @JoinColumn(name = "level")
     public Config level;
-
-    @ManyToOne
-    @JoinColumn(name = "type")
-    public Config type;
 
     public static final Finder<Long, User> find = new Finder<>(User.class, "ecommerce");
 

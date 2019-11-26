@@ -3,40 +3,33 @@ package models.ecommerce.promotion;
 import io.ebean.Finder;
 import models.base.BasicModel;
 import models.ecommerce.common.Config;
-import models.ecommerce.customer.User;
-import models.ecommerce.customer.UserTag;
+import models.ecommerce.merchandise.Merchandise;
+import models.ecommerce.merchandise.MerchandiseTag;
 
 import javax.persistence.*;
 
 @Entity
 @Table
-public class RangeUser extends BasicModel {
+public class ActivityRangeMerchandise extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT -1 COMMENT '黑白名单:[+ 白名单, - 黑名单]'")
-    public boolean blackWhite;
+    @ManyToOne
+    public ActivityRange activityRange;
+
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'MM' COMMENT '类别:[MM 商品, MT 标签, MC 类别]'")
+    public String merchandiseType;
 
     @ManyToOne
-    public Activity activity;
-
-    @Column(nullable = false, columnDefinition = "CHAR(2) DEFAULT 'UU' COMMENT '类别:[UU 用户, UG 标签, UA 区域, UT 类型]'")
-    public String userType;
+    public Merchandise merchandise;
 
     @ManyToOne
-    public User user;
-
-    @ManyToOne
-    @JoinColumn(name = "tag")
-    public Config tag;
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
-    public String area;
+    public MerchandiseTag merchandiseTag;
 
     @Transient
     public String code;
 
-    public static final Finder<Long, RangeUser> find = new Finder<>(RangeUser.class, "ecommerce");
+    public static final Finder<Long, ActivityRangeMerchandise> find = new Finder<>(ActivityRangeMerchandise.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")

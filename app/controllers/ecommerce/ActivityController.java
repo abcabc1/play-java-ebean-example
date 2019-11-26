@@ -3,8 +3,6 @@ package controllers.ecommerce;
 import models.ecommerce.customer.User;
 import models.ecommerce.merchandise.Merchandise;
 import models.ecommerce.promotion.Activity;
-import models.ecommerce.promotion.RangeMerchandise;
-import models.ecommerce.promotion.RangeUser;
 import models.iplay.view.CacheView;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -37,7 +35,7 @@ public class ActivityController extends Controller {
     public CompletionStage<Result> getActivityByRange(Http.Request request) {
         List<Merchandise> merchandiseList = RequestUtil.getRequestJsonList(request, "models", Merchandise.class);
         List<User> userList = RequestUtil.getRequestJsonList(request, "models", User.class);
-        List<String> stringList = saleService.getActivityKeysByRange(merchandiseList, userList);
+        List<String> stringList = null;//saleService.getActivityKeysByRange(merchandiseList, userList);
         return cacheService.getAsyncList(stringList).thenApply(v -> ResultUtil.success("cache", v.stream().flatMap(Collection::stream).collect(Collectors.toList())));
     }
 
@@ -55,7 +53,8 @@ public class ActivityController extends Controller {
 
     public Result setActivity(Http.Request request) {
         List<Activity> models = RequestUtil.getRequestJsonList(request, "models", Activity.class);
-        List<CacheView> cacheViewList = models.stream().map(saleService::buildCacheView).flatMap(Collection::stream).collect(Collectors.toList());
+        List<CacheView> cacheViewList = saleService.buildCacheViewList(models);
+//        List<CacheView> cacheViewList = models.stream().map(saleService::getCacheView).flatMap(Collection::stream).collect(Collectors.toList());
         cacheService.setAsyncList(cacheViewList);
         return ResultUtil.success();
     }

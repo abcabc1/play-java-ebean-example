@@ -28,7 +28,9 @@ libraryDependencies ++= Seq(
   , "org.jsoup" % "jsoup" % "1.12.1"
 //  , "com.auth0" % "java-jwt" % "3.8.3"
   , "io.jsonwebtoken" % "jjwt" % "0.9.1"
+  , "org.mockito" % "mockito-core" % "3.1.0" % Test
 )
+
 testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-a", "-v")
 
 javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")

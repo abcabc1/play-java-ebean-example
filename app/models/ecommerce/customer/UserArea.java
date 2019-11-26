@@ -1,22 +1,28 @@
-package models.ecommerce.promotion;
+package models.ecommerce.customer;
 
 import io.ebean.Finder;
-import models.base.BasicSimpleModel;
+import models.base.BasicModel;
+import models.ecommerce.common.Config;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class ActivityMj extends BasicSimpleModel {
+public class UserArea extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToOne
-    public Activity activity;
+    @ManyToOne
+    public User user;
 
-    public static final Finder<Long, ActivityMj> find = new Finder<>(ActivityMj.class, "ecommerce");
+    @ManyToOne
+    @JoinColumn(name = "area")
+    public Config area;
+
+    public static final Finder<Long, UserArea> find = new Finder<>(UserArea.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

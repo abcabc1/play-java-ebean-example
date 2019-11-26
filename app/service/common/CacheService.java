@@ -74,6 +74,11 @@ public class CacheService {
                 });
     }
 
+    @SuppressWarnings("unchecked")
+    public CompletionStage<List<String>> getAsyncSingleList(String key) {
+        return asyncCache.list(key, String.class).toList();
+    }
+
     public void removeAsyncList(List<CacheView> list) {
         list.forEach(v -> asyncCache.list(v.key, String.class).remove(v.value));
     }

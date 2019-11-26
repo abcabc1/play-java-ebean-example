@@ -3,14 +3,16 @@ package models.ecommerce.promotion;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.iplay.view.CacheView;
-import utils.maths.CalculatorUtils;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/*
+一个活动(Activity)的规则集合(List<ActivityRange>)里有且只有1个名单（白名单或黑黑名单.
+即一个活动的规则集合有两种情况（1白名单活动规则，1黑名单活动规则）其实串货的规则更合理，即可以有黑白同时存在，让集合按照顺序加减
+同一个商品和用户只会在活动规则集合中被包含一次
+ */
 @Entity
 @Table
 public class Activity extends BasicModel {
@@ -47,10 +49,7 @@ public class Activity extends BasicModel {
     public Date endTo;
 
     @OneToMany
-    public List<RangeMerchandise> rangeMerchandiseList;
-
-    @OneToMany
-    public List<RangeUser> rangeUserList;
+    public List<ActivityRange> activityRangeList;
 
 //    public Set<String> build() {
 //        Set<String> rangeSet = new HashSet<>();
