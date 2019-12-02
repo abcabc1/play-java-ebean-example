@@ -1,17 +1,22 @@
+import models.ecommerce.customer.view.UserRangeView;
+import models.ecommerce.merchandise.view.MerchandiseRangeView;
 import models.ecommerce.promotion.Activity;
 import models.ecommerce.promotion.ActivityRange;
 import models.ecommerce.promotion.ActivityRangeMerchandise;
 import models.ecommerce.promotion.ActivityRangeUser;
-import models.iplay.view.CacheView;
+import org.jetbrains.annotations.NotNull;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import play.cache.redis.KeyValue;
 import play.test.WithApplication;
 import service.common.CacheService;
+import service.ecommerce.customer.CustomerService;
+import service.ecommerce.merchandise.MerchandiseService;
 import service.ecommerce.sale.SaleService;
+import utils.maths.CalculatorUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -23,81 +28,126 @@ test only organize the data and output, no calculation and computing which shoul
 public class EcommerceTest extends WithApplication {
 
     SaleService saleService = new SaleService();
+    CustomerService customerService = new CustomerService();
+    MerchandiseService merchandiseService = new MerchandiseService();
 
+    private CacheService cacheService;
+
+    @Before
+    public void setup() {
+        cacheService = app.injector().instanceOf(CacheService.class);
+    }
+
+    @After
+    public void teardown() {
+        cacheService = null;
+    }
+
+    /*
+    设置活动缓存
+     */
     @Test
     public void setActivityListCache() {
-        CacheService cacheService = app.injector().instanceOf(CacheService.class);
-        List<Activity> activityList = buildActivity4Test();
-        List<CacheView> cacheViewList = saleService.buildCacheViewList(activityList);
-        List<CacheView> revertCacheViewList = saleService.revertCacheViewList(cacheViewList);
-        cacheService.setAsyncList(cacheViewList);
+        List<Activity> activityList = buildActivityData();
+        List<KeyValue> keyValueList = saleService.buildKeyValueList(activityList);
+        List<KeyValue> revertCacheViewList = saleService.revertKeyValueList(keyValueList);
+        cacheService.setAsyncList(keyValueList);
         cacheService.setAsyncList(revertCacheViewList);
         await().atLeast(10, SECONDS);
     }
 
-    @Test
-    public void buildActivityCacheViewList() {
-        List<Activity> activityList = buildActivity4Test();
-        saleService.buildCacheViewList(activityList);
-    }
-
+    /*
+    获取用户商品匹配的活动
+     */
     @Test
     public void getActivityListCache() {
-        String userId = "2";
-        List<Long> merchandiseList = Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L);
-        CacheService cacheService = app.injector().instanceOf(CacheService.class);
-        for (Long merchandiseId : merchandiseList) {
-            List<String> keyList = saleService.buildActivityRangeList(Long.parseLong(userId), merchandiseId);
-            cacheService.getAsyncList(keyList).thenApplyAsync(v -> v.stream().flatMap(Collection::stream).collect(Collectors.toList())).thenAccept(v -> {
-                System.out.println("merchandise: " + merchandiseId);
-                System.out.println(v);
-            });
+        Set<String> set = cacheService.getAsyncSetKeys(Arrays.asList("ALL")).stream().flatMap(Collection::stream).collect(Collectors.toSet());
+        Long[][] users = {
+                //{UU,UT,UA,UC}
+                {1L, 0L, 0L, 0L}
+                , {2L, 1L, 0L, 0L}
+                , {3L, 0L, 1L, 0L}
+                , {4L, 0L, 0L, 1L}
+        };
+        Long[][] merchandises = {
+                //{MM,MT,MS}
+                {1L, 1L, 1L}
+                , {2L, 1L, 1L}
+                , {3L, 2L, 2L}
+        };
+        List<UserRangeView> userRangeViewList = Arrays.stream(users).map(v -> customerService.buildUserRangeView(v[0], v[1], v[2], v[3])).collect(Collectors.toList());
+        List<MerchandiseRangeView> merchandiseRangeViewList = Arrays.stream(merchandises).map(v -> merchandiseService.buildMerchandiseRangeView(v[0], v[1], v[2])).collect(Collectors.toList());
+        for (UserRangeView userRangeView : userRangeViewList) {
+            System.out.println(userRangeView);
+            for (MerchandiseRangeView merchandiseRangeView : merchandiseRangeViewList) {
+                List<String> keyList = saleService.buildActivityRangeKeyList(userRangeView, merchandiseRangeView);
+                System.out.print(merchandiseRangeView);
+                System.out.println(CalculatorUtils.unionRelative(cacheService.getAsyncSetKeys(keyList).stream().flatMap(Collection::stream).collect(Collectors.toSet()), set));
+            }
+            System.out.println();
         }
-        await().atLeast(10, SECONDS);
+//        await().atLeast(10, SECONDS);
 //        Assert.assertTrue(cacheViewList.size() != 0);
     }
 
-    public void removeActivityKeys() {
-        List<Long> userList = Arrays.asList(1L);
-        List<Long> merchandiseList = Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L);
-        List<String> list = saleService.buildActivityRangeList(userList, merchandiseList);
-        CacheService cacheService = app.injector().instanceOf(CacheService.class);
-        cacheService.removeAsyncList(null);
+    @Test
+    public void removeActivityList() {
+        String[] activities = {"1", "2", "4", "6", "8"};
+        List<String> keyList = Arrays.asList(activities);
+        List<String> list = cacheService.getAsyncListKeys(keyList).stream().flatMap(Collection::stream).collect(Collectors.toList());
+        List<KeyValue> keyValueList = saleService.getKeyValueList(keyList, list);
+        cacheService.removeAsyncKeys(activities);
+        cacheService.removeAsyncListKeys(keyValueList);
     }
 
-    public void removeActivityAll() {
-
-    }
-
-    private List<Activity> buildActivity4Test() {
+    private List<Activity> buildActivityData() {
         String[][] datass = {
-                //0    1    2    3    4     5    6   7    8      9   10  11  12  13 14
-//                A,AR,RU_BW,RU,RU_TYPE,UU,UT,UA,UC,RM,RM_BW,RM_TYPE,MM,MT,REMARK}
-                {"1", "1", "+", "1", "UU", "1", "", "", "", "1", "+", "MM", "1", "", "用户1商品1活动1"}
-                , {"1", "1", "+", "1", "UU", "1", "", "", "", "2", "+", "MM", "2", "", "用户1商品2活动1"}
-                , {"2", "2", "+", "2", "UU", "1", "", "", "", "3", "+", "MM", "1", "", "用户1商品1活动2"}
-                , {"2", "2", "+", "2", "UU", "1", "", "", "", "4", "+", "MM", "2", "", "用户1商品2活动2"}
-                , {"3", "3", "+", "3", "UU", "1", "", "", "", "5", "-", "MM", "3", "", "用户1商品3活动3-"}
-                , {"3", "3", "+", "3", "UU", "1", "", "", "", "6", "-", "MM", "1", "", "用户1商品1活动3-"}
-                , {"3", "3", "+", "3", "UU", "1", "", "", "", "7", "-", "MM", "2", "", "用户1商品2活动3-"}
-                , {"4", "4", "+", "4", "UU", "1", "", "", "", "8", "+", "MM", "4", "", "用户1商品4活动4"}
-                , {"4", "4", "+", "4", "UU", "1", "", "", "", "9", "+", "MM", "3", "", "用户1商品3活动4"}
-                , {"4", "4", "+", "4", "UU", "1", "", "", "", "10", "+", "MM", "1", "", "用户1商品1活动4"}
-                , {"5", "5", "+", "5", "ALL", "", "", "", "", "11", "+", "MM", "5", "", "用户ALL商品5活动5"}
-                , {"5", "5", "+", "5", "ALL", "", "", "", "", "12", "+", "MM", "6", "", "用户ALL商品6活动5"}
-                , {"5", "5", "+", "5", "ALL", "", "", "", "", "13", "+", "MM", "1", "", "用户ALL商品1活动5"}
-                , {"6", "6", "+", "6", "ALL", "", "", "", "", "14", "-", "MM", "7", "", "用户ALL商品7活动6-"}
-                , {"7", "7", "+", "7", "UU", "2", "", "", "", "15", "-", "ALL", "", "", "用户2商品ALL活动7-"}
-                , {"8", "8", "+", "8", "UU", "2", "", "", "", "16", "+", "ALL", "", "", "用户2商品ALL活动8"}
+//                 0  1   2      3   4        5   6   7   8   9   10     11       12  13  14  15
+//                {A, AR, RU_BW, RU, RU_TYPE, UU, UT, UA, UC, RM, RM_BW, RM_TYPE, MM, MT, MS, REMARK}
+//                {"1", "1", "+", "1", "UU", "1", "", "", "", "1", "+", "MM", "1", "", "", "活动1   用户1商品1"}
+//                , {"1", "1", "+", "1", "UU", "1", "", "", "", "2", "+", "MM", "2", "", "", "活动1   用户1商品2"}
+//                , {"2", "2", "+", "2", "UU", "1", "", "", "", "3", "+", "MM", "1", "", "", "活动2   用户1商品1"}
+//                , {"2", "2", "+", "2", "UU", "1", "", "", "", "4", "+", "MM", "2", "", "", "活动2   用户1商品2"}
+//                , {"3", "3", "+", "3", "UU", "1", "", "", "", "5", "-", "MM", "3", "", "", "活动3   用户1商品3-"}
+//                , {"3", "3", "+", "3", "UU", "1", "", "", "", "6", "-", "MM", "1", "", "", "活动3   用户1商品1-"}
+//                , {"3", "3", "+", "3", "UU", "1", "", "", "", "7", "-", "MM", "2", "", "", "活动3   用户1商品2-"}
+//                , {"4", "4", "+", "4", "UU", "1", "", "", "", "8", "+", "MM", "4", "", "", "活动4   用户1商品4"}
+//                , {"4", "4", "+", "4", "UU", "1", "", "", "", "9", "+", "MM", "3", "", "", "活动4   用户1商品3"}
+//                , {"4", "4", "+", "4", "UU", "1", "", "", "", "10", "+", "MM", "1", "", "", "活动4   用户1商品1"}
+//                , {"4", "4", "+", "4", "UU", "1", "", "", "", "11", "+", "MM", "2", "", "", "活动4   用户1商品2"}
+//                , {"5", "5", "+", "5", "ALL", "", "", "", "", "12", "+", "MM", "5", "", "", "活动5   用户ALL商品5"}
+//                , {"5", "5", "+", "5", "ALL", "", "", "", "", "13", "+", "MM", "6", "", "", "活动5   用户ALL商品6"}
+//                , {"5", "5", "+", "5", "ALL", "", "", "", "", "14", "+", "MM", "1", "", "", "活动5   用户ALL商品1"}
+//                , {"6", "6", "+", "6", "ALL", "", "", "", "", "15", "-", "MM", "7", "", "", "活动6   用户ALL商品7-"}
+//                , {"7", "7", "+", "7", "UU", "2", "", "", "", "16", "-", "ALL", "", "", "", "活动7   用户2商品ALL-"}
+//                , {"8", "8", "+", "8", "UU", "2", "", "", "", "16", "+", "ALL", "", "", "", "活动8   用户2商品ALL"}
+//                , {"9", "9", "+", "9", "UT", "", "1", "", "", "17", "+", "MT", "", "1", "", "活动9   用户标签1商品类别1"}
+//                , {"9", "9", "+", "10", "UT", "", "2", "", "", "17", "+", "MT", "", "1", "", "活动9   用户标签2商品类别1"}
+//                , {"10", "10", "+", "11", "UA", "", "", "1", "", "18", "+", "MT", "", "1", "", "活动10 用户区域1商品类别1"}
+//                , {"11", "11", "+", "12", "UC", "", "", "", "1", "19", "+", "MT", "", "1", "", "活动11 用户类别1商品类别1"}
+                {"12", "12", "+", "13", "UU", "1", "", "", "", "20", "+", "MS", "", "", "1", "活动12 用户1商品商户1"}
+                , {"12", "12", "+", "13", "UU", "1", "", "", "", "21", "+", "MS", "", "", "2", "活动12 用户1商品商户2"}
+                , {"13", "13", "+", "14", "UU", "1", "", "", "", "22", "-", "MS", "", "", "1", "活动13 用户1商品商户1-"}
         };
+        return buildActitityList(datass);
+//        Arrays.stream(datas).flatMap(v-> Stream.of(v[0])).distinct().forEach(System.out::println);
+//        Arrays.stream(datas).map(v-> buildActivity(v[0])).distinct().forEach(System.out::println);
+//        Arrays.stream(datass).filter(v -> !("".equals(v))).map(v -> buildActivityRangeUser(v[7], v[8], v[9], v[10], v[11], v[12])).distinct().forEach(v -> userList.add(v));
+    }
+
+    /*
+    构建活动集合
+     */
+    @NotNull
+    public List<Activity> buildActitityList(String[][] datas) {
         List<Activity> activityList = new ArrayList<>();
         Activity currentActivity = null;
         ActivityRange currentActivityRange = null;
         ActivityRangeUser currentActivityRangeUser = null;
         ActivityRangeMerchandise currentActivityRangeMerchandise = null;
 
-        for (String[] datas : datass) {
-            String activityId = datas[0], activityRangeId = datas[1], activityRangeUserBlackWhite = datas[2], activityRangeMerchandiseBlackWhite = datas[10], activityRangeUserId = datas[3], activityRangeUserType = datas[4], activityRangeUserUser = datas[5], activityRangeUserTag = datas[6], activityRangeUserArea = datas[7], activityRangeUserCategory = datas[8], activityRangeMerchandiseId = datas[9], activityRangeMerchandiseType = datas[11], activityRangeMerchandiseMerchandise = datas[12], activityRangeMerchandiseTag = datas[13];
+        for (String[] data : datas) {
+            String activityId = data[0], activityRangeId = data[1], activityRangeUserBlackWhite = data[2], activityRangeMerchandiseBlackWhite = data[10], activityRangeUserId = data[3], activityRangeUserType = data[4], activityRangeUserUser = data[5], activityRangeUserTag = data[6], activityRangeUserArea = data[7], activityRangeUserCategory = data[8], activityRangeMerchandiseId = data[9], activityRangeMerchandiseType = data[11], activityRangeMerchandiseMerchandise = data[12], activityRangeMerchandiseTag = data[13], activityRangeMerchandiseStoreId = data[14];
             if (saleService.checkActivityValid(activityId) && (currentActivity == null || currentActivity.id != Long.parseLong(activityId))) {
                 currentActivity = saleService.buildActivity(activityId);
                 activityList.add(currentActivity);
@@ -112,15 +162,12 @@ public class EcommerceTest extends WithApplication {
                 currentActivityRangeUser.activityRange = currentActivityRange;
                 currentActivityRange.activityRangeUserList.add(currentActivityRangeUser);
             }
-            if (saleService.checkActivityRangeMerchandiseValid(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag) && (currentActivityRangeMerchandise == null || currentActivityRangeMerchandise.id != Long.parseLong(activityRangeMerchandiseId))) {
-                currentActivityRangeMerchandise = saleService.buildActivityRangeMerchandise(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag);
+            if (saleService.checkActivityRangeMerchandiseValid(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag, activityRangeMerchandiseStoreId) && (currentActivityRangeMerchandise == null || currentActivityRangeMerchandise.id != Long.parseLong(activityRangeMerchandiseId))) {
+                currentActivityRangeMerchandise = saleService.buildActivityRangeMerchandise(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag, activityRangeMerchandiseStoreId);
                 currentActivityRangeMerchandise.activityRange = currentActivityRange;
                 currentActivityRange.activityRangeMerchandiseList.add(currentActivityRangeMerchandise);
             }
         }
         return activityList;
-//        Arrays.stream(datas).flatMap(v-> Stream.of(v[0])).distinct().forEach(System.out::println);
-//        Arrays.stream(datas).map(v-> buildActivity(v[0])).distinct().forEach(System.out::println);
-//        Arrays.stream(datass).filter(v -> !("".equals(v))).map(v -> buildActivityRangeUser(v[7], v[8], v[9], v[10], v[11], v[12])).distinct().forEach(v -> userList.add(v));
     }
 }

@@ -124,6 +124,7 @@ create table activity_range_merchandise (
   merchandise_type              CHAR(1) DEFAULT 'MM' COMMENT '类别:[MM 商品, MT 标签, MC 类别]' not null,
   merchandise_id                bigint COMMENT 'ID',
   merchandise_tag_id            bigint COMMENT 'ID',
+  merchandise_store_id          bigint COMMENT 'ID',
   constraint pk_activity_range_merchandise primary key (id)
 );
 
@@ -191,6 +192,16 @@ create table merchandise_pack (
   merchandise_id                bigint COMMENT 'ID',
   pack_id                       bigint COMMENT 'ID',
   constraint pk_merchandise_pack primary key (id)
+);
+
+create table merchandise_store (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  store                         bigint COMMENT 'ID',
+  merchandise                   bigint COMMENT 'ID',
+  constraint pk_merchandise_store primary key (id)
 );
 
 create table merchandise_tag (
@@ -372,6 +383,16 @@ create table user_license (
   constraint pk_user_license primary key (id)
 );
 
+create table user_merchandise (
+  id                            bigint COMMENT 'ID' auto_increment not null,
+  status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
+  create_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间' not null,
+  update_time                   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '修改时间' not null,
+  user                          bigint COMMENT 'ID',
+  merchandise                   bigint COMMENT 'ID',
+  constraint pk_user_merchandise primary key (id)
+);
+
 create table user_merchandise_category (
   id                            bigint COMMENT 'ID' auto_increment not null,
   status                        TINYINT UNSIGNED DEFAULT 1 COMMENT '数据是否有效[0 无效,1 有效]' not null,
@@ -412,6 +433,9 @@ alter table activity_range_merchandise add constraint fk_activity_range_merchand
 create index ix_activity_range_merchandise_merchandise_tag_id on activity_range_merchandise (merchandise_tag_id);
 alter table activity_range_merchandise add constraint fk_activity_range_merchandise_merchandise_tag_id foreign key (merchandise_tag_id) references merchandise_tag (id) on delete restrict on update restrict;
 
+create index ix_activity_range_merchandise_merchandise_store_id on activity_range_merchandise (merchandise_store_id);
+alter table activity_range_merchandise add constraint fk_activity_range_merchandise_merchandise_store_id foreign key (merchandise_store_id) references merchandise_store (id) on delete restrict on update restrict;
+
 create index ix_activity_range_user_activity_range_id on activity_range_user (activity_range_id);
 alter table activity_range_user add constraint fk_activity_range_user_activity_range_id foreign key (activity_range_id) references activity_range (id) on delete restrict on update restrict;
 
@@ -435,6 +459,12 @@ alter table merchandise_pack add constraint fk_merchandise_pack_merchandise_id f
 
 create index ix_merchandise_pack_pack_id on merchandise_pack (pack_id);
 alter table merchandise_pack add constraint fk_merchandise_pack_pack_id foreign key (pack_id) references pack (id) on delete restrict on update restrict;
+
+create index ix_merchandise_store_store on merchandise_store (store);
+alter table merchandise_store add constraint fk_merchandise_store_store foreign key (store) references store (id) on delete restrict on update restrict;
+
+create index ix_merchandise_store_merchandise on merchandise_store (merchandise);
+alter table merchandise_store add constraint fk_merchandise_store_merchandise foreign key (merchandise) references merchandise (id) on delete restrict on update restrict;
 
 create index ix_merchandise_tag_merchandise_id on merchandise_tag (merchandise_id);
 alter table merchandise_tag add constraint fk_merchandise_tag_merchandise_id foreign key (merchandise_id) references merchandise (id) on delete restrict on update restrict;
@@ -497,6 +527,12 @@ alter table user_license add constraint fk_user_license_user_id foreign key (use
 create index ix_user_license_license_code on user_license (license_code);
 alter table user_license add constraint fk_user_license_license_code foreign key (license_code) references config (code) on delete restrict on update restrict;
 
+create index ix_user_merchandise_user on user_merchandise (user);
+alter table user_merchandise add constraint fk_user_merchandise_user foreign key (user) references user (id) on delete restrict on update restrict;
+
+create index ix_user_merchandise_merchandise on user_merchandise (merchandise);
+alter table user_merchandise add constraint fk_user_merchandise_merchandise foreign key (merchandise) references merchandise (id) on delete restrict on update restrict;
+
 create index ix_user_merchandise_category_user_id on user_merchandise_category (user_id);
 alter table user_merchandise_category add constraint fk_user_merchandise_category_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -532,6 +568,9 @@ drop index ix_activity_range_merchandise_merchandise_id on activity_range_mercha
 alter table activity_range_merchandise drop foreign key fk_activity_range_merchandise_merchandise_tag_id;
 drop index ix_activity_range_merchandise_merchandise_tag_id on activity_range_merchandise;
 
+alter table activity_range_merchandise drop foreign key fk_activity_range_merchandise_merchandise_store_id;
+drop index ix_activity_range_merchandise_merchandise_store_id on activity_range_merchandise;
+
 alter table activity_range_user drop foreign key fk_activity_range_user_activity_range_id;
 drop index ix_activity_range_user_activity_range_id on activity_range_user;
 
@@ -555,6 +594,12 @@ drop index ix_merchandise_pack_merchandise_id on merchandise_pack;
 
 alter table merchandise_pack drop foreign key fk_merchandise_pack_pack_id;
 drop index ix_merchandise_pack_pack_id on merchandise_pack;
+
+alter table merchandise_store drop foreign key fk_merchandise_store_store;
+drop index ix_merchandise_store_store on merchandise_store;
+
+alter table merchandise_store drop foreign key fk_merchandise_store_merchandise;
+drop index ix_merchandise_store_merchandise on merchandise_store;
 
 alter table merchandise_tag drop foreign key fk_merchandise_tag_merchandise_id;
 drop index ix_merchandise_tag_merchandise_id on merchandise_tag;
@@ -617,6 +662,12 @@ drop index ix_user_license_user_id on user_license;
 alter table user_license drop foreign key fk_user_license_license_code;
 drop index ix_user_license_license_code on user_license;
 
+alter table user_merchandise drop foreign key fk_user_merchandise_user;
+drop index ix_user_merchandise_user on user_merchandise;
+
+alter table user_merchandise drop foreign key fk_user_merchandise_merchandise;
+drop index ix_user_merchandise_merchandise on user_merchandise;
+
 alter table user_merchandise_category drop foreign key fk_user_merchandise_category_user_id;
 drop index ix_user_merchandise_category_user_id on user_merchandise_category;
 
@@ -655,6 +706,8 @@ drop table if exists merchandise;
 
 drop table if exists merchandise_pack;
 
+drop table if exists merchandise_store;
+
 drop table if exists merchandise_tag;
 
 drop table if exists operator;
@@ -690,6 +743,8 @@ drop table if exists user_area;
 drop table if exists user_category;
 
 drop table if exists user_license;
+
+drop table if exists user_merchandise;
 
 drop table if exists user_merchandise_category;
 
