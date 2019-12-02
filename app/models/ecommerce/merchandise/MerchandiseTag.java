@@ -2,14 +2,15 @@ package models.ecommerce.merchandise;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.common.Config;
 import models.ecommerce.customer.UserTag;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/*
+商品标签
+ */
 @Entity
 @Table
 public class MerchandiseTag extends BasicModel {

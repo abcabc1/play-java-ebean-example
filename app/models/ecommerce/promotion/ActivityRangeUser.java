@@ -2,7 +2,6 @@ package models.ecommerce.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.common.Config;
 import models.ecommerce.customer.User;
 import models.ecommerce.customer.UserArea;
 import models.ecommerce.customer.UserCategory;
@@ -10,6 +9,9 @@ import models.ecommerce.customer.UserTag;
 
 import javax.persistence.*;
 
+/*
+活动用户集合
+ */
 @Entity
 @Table
 public class ActivityRangeUser extends BasicModel {

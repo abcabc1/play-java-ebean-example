@@ -6,6 +6,9 @@ import models.base.BasicModel;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/*
+订单包裹
+ */
 @Entity
 @Table
 public class OrderPackage extends BasicModel {

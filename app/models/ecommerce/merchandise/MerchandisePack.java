@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/*
+商品套餐
+ */
 @Entity
 @Table
 public class MerchandisePack extends BasicModel {

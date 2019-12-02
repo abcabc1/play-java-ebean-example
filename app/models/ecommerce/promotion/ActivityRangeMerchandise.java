@@ -2,12 +2,15 @@ package models.ecommerce.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.common.Config;
 import models.ecommerce.merchandise.Merchandise;
 import models.ecommerce.merchandise.MerchandiseTag;
+import models.ecommerce.sale.MerchandiseStore;
 
 import javax.persistence.*;
 
+/*
+活动商品集合
+ */
 @Entity
 @Table
 public class ActivityRangeMerchandise extends BasicModel {
@@ -25,6 +28,9 @@ public class ActivityRangeMerchandise extends BasicModel {
 
     @ManyToOne
     public MerchandiseTag merchandiseTag;
+
+    @ManyToOne
+    public MerchandiseStore merchandiseStore;
 
     @Transient
     public String code;

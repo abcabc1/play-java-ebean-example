@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/*
+客户证照
+ */
 @Entity
 @Table
 public class UserLicense extends BasicModel {

@@ -1,13 +1,16 @@
 package service.common;
 
 import akka.Done;
-import models.iplay.view.CacheView;
 import play.cache.SyncCacheApi;
 import play.cache.redis.AsyncCacheApi;
+import play.cache.redis.AsyncRedisList;
 import play.cache.redis.KeyValue;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
@@ -27,8 +30,17 @@ public class CacheService {
         cache.set(key, value);
     }
 
-    public void remove(String key) {
-        cache.remove(key);
+    public CompletionStage<Done> setAsync(String key, String value) {
+        return asyncCache.set(key, value);
+    }
+
+    public CompletionStage<Done> setAsyncKeys(KeyValue[] keyValues) {
+        return asyncCache.setAll(keyValues);
+    }
+
+    public List<AsyncRedisList<String>> setAsyncList(List<KeyValue> list) {
+        return list.stream().map(v -> asyncCache.list(v.key, String.class).append(v.value.toString())).map(CompletionStage::toCompletableFuture).map(CompletableFuture::join).collect(Collectors.toList());
+//        list.forEach(v -> asyncCache.list(v.key, String.class).append(v.value.toString()));
     }
 
     public String get(String key) {
@@ -39,71 +51,53 @@ public class CacheService {
         return asyncCache.getOptional(key);
     }
 
-    public CompletionStage<Done> removeAsync(String key) {
-        return asyncCache.remove(key);
-    }
-
-    public CompletionStage<Done> setAsync(String key, String value) {
-        return asyncCache.set(key, value);
-    }
-
-    public CompletionStage<List<Optional<String>>> getKeysAsync(List<String> keys) {
+    public CompletionStage<List<Optional<String>>> getAsyncKeys(List<String> keys) {
         return asyncCache.getAll(String.class, keys);
     }
 
-    public CompletionStage<Done> setKeysAsync(KeyValue[] keyValues) {
-        return asyncCache.setAll(keyValues);
+    public List<List<String>> getAsyncListKeys(List<String> keyList) {
+        return keyList.stream().map(v -> asyncCache.list(v, String.class).toList()).collect(Collectors.toList()).stream().map(CompletionStage::toCompletableFuture).map(CompletableFuture::join).collect(Collectors.toList());
     }
 
-    public CompletionStage<Done> removeKeysAsync(String[] keys) {
+//    @SuppressWarnings("unchecked")
+//    public CompletableFuture<List<List<String>>> getAsyncListKeys(List<String> keys) {
+//        List<String> list = new ArrayList<>();
+//        List<CompletionStage<List<String>>> futureList = keys.stream().map(v -> asyncCache.list(v, String.class).toList()).collect(Collectors.toList());
+//        return CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()]))
+//                .thenApply(v -> futureList.stream().map(CompletionStage::toCompletableFuture).map(CompletableFuture::join).collect(Collectors.toList()))
+//                .whenComplete((v, e) -> {
+//                    v.forEach(list::addAll);
+//                });
+//    }
+
+    public Set<List<String>> getAsyncSetKeys(List<String> keyList) {
+        return keyList.stream().map(v -> asyncCache.list(v, String.class).toList()).collect(Collectors.toSet()).stream().map(CompletionStage::toCompletableFuture).map(CompletableFuture::join).collect(Collectors.toSet());
+    }
+
+    public void remove(String key) {
+        cache.remove(key);
+    }
+
+    public CompletionStage<Done> removeAsyncKey(String key) {
+        return asyncCache.remove(key);
+    }
+
+    public CompletionStage<Done> removeAsyncKeys(String[] keys) {
         return asyncCache.removeAllKeys(keys);
     }
 
-    public void setAsyncList(List<CacheView> list) {
-        list.forEach(v -> asyncCache.list(v.key, String.class).append(v.value));
+    public void removeAsyncListKeys(List<KeyValue> list) {
+        list.stream().map(v->asyncCache.list(v.key,String.class).remove(v.value.toString())).map(CompletionStage::toCompletableFuture).map(CompletableFuture::join).collect(Collectors.toList());
     }
 
-    @SuppressWarnings("unchecked")
-    public CompletableFuture<List<List<String>>> getAsyncList(List<String> keys) {
-        List<String> list = new ArrayList<>();
-        List<CompletionStage<List<String>>> futureList = keys.stream().map(v -> asyncCache.list(v, String.class).toList()).collect(Collectors.toList());
-        return CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()]))
-                .thenApply(v -> futureList.stream().map(CompletionStage::toCompletableFuture).map(CompletableFuture::join).collect(Collectors.toList()))
-                .whenComplete((v, e) -> {
-                    v.forEach(list::addAll);
-                });
-    }
-
-    @SuppressWarnings("unchecked")
-    public CompletionStage<List<String>> getAsyncSingleList(String key) {
-        return asyncCache.list(key, String.class).toList();
-    }
-
-    public void removeAsyncList(List<CacheView> list) {
-        list.forEach(v -> asyncCache.list(v.key, String.class).remove(v.value));
-    }
-
-    public void setAsyncSet(Set<CacheView> set) {
-        for (Iterator it = set.iterator(); it.hasNext();) {
-            CacheView cacheView = (CacheView)it.next();
-            asyncCache.set(cacheView.key, String.class).add(cacheView.value);
+    public void removeAsyncSet(Set<KeyValue> set) {
+        for (Iterator it = set.iterator(); it.hasNext(); ) {
+            KeyValue keyValue = (KeyValue) it.next();
+            asyncCache.set(keyValue.key, String.class).remove(keyValue.value.toString());
         }
     }
 
-    public CompletableFuture<List<Set<String>>> getAsyncSet(List<String> keys) {
-        List<String> list = new ArrayList<>();
-        List<CompletionStage<Set<String>>> futureList = keys.stream().map(v->asyncCache.set(v, String.class).toSet()).collect(Collectors.toList());
-        return CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()]))
-                .thenApply(v -> futureList.stream().map(CompletionStage::toCompletableFuture).map(CompletableFuture::join).collect(Collectors.toList()))
-                .whenComplete((v, e) -> {
-                    v.forEach(list::addAll);
-                });
-    }
-
-    public void removeAsyncSet(Set<CacheView> set) {
-        for (Iterator it = set.iterator(); it.hasNext();) {
-            CacheView cacheView = (CacheView)it.next();
-            asyncCache.set(cacheView.key, String.class).remove(cacheView.value);
-        }
+    public KeyValue buildKeyValue(String key, String value) {
+        return new KeyValue(key, value);
     }
 }

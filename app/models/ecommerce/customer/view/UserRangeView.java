@@ -1,24 +1,22 @@
-package models.ecommerce.promotion;
+package models.ecommerce.customer.view;
 
-import io.ebean.Finder;
-import models.base.BasicSimpleModel;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import io.ebean.Model;
 
 /*
-秒杀
+客户集合
  */
-@Entity
-@Table
-public class ActivityMs extends BasicSimpleModel {
+public class UserRangeView extends Model {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToOne
-    public Activity activity;
-    public static final Finder<Long, ActivityMs> find = new Finder<>(ActivityMs.class, "ecommerce");
+    public Long userId;
+    public Long userTagId;
+    public Long userAreaId;
+    public Long userCategoryId;
+
+    public String toString(){
+        return new StringBuilder().append("userId: ").append(userId).append(", userTagId: ").append(userTagId).append(", userAreaId: ").append(userAreaId).append(", userCategoryId: ").append(userCategoryId).toString();
+    }
 
 /*
     @JsonBackReference(value = "operatorPass")

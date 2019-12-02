@@ -7,6 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/*
+商品
+ */
 @Entity
 @Table
 public class Merchandise extends BasicModel {

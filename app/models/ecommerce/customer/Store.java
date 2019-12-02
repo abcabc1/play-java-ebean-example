@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/*
+商户
+ */
 @Entity
 @Table
 public class Store extends BasicModel {

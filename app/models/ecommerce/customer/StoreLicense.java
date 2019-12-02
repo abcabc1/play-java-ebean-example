@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/*
+商户证照
+ */
 @Entity
 @Table
 public class StoreLicense extends BasicModel {

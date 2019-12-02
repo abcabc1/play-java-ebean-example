@@ -58,12 +58,12 @@ public class CacheController extends Controller {
 
     public CompletionStage<Result> removeAsync(Http.Request request) {
         String key = RequestUtil.getRequestString(request, "key").orElse("");
-        return cacheService.removeAsync(key).thenApply(v -> ResultUtil.success(key + " removed", v.toString()));
+        return cacheService.removeAsyncKey(key).thenApply(v -> ResultUtil.success(key + " removed", v.toString()));
     }
 
     public CompletionStage<Result> getKeysAsync(Http.Request request) {
         List<String> models = RequestUtil.getRequestJsonList(request, "models", String.class);
-        return cacheService.getKeysAsync(models).thenApply(v -> ResultUtil.success("caches", v.stream().map(s -> s.orElse("")).collect(Collectors.toList())));
+        return cacheService.getAsyncKeys(models).thenApply(v -> ResultUtil.success("caches", v.stream().map(s -> s.orElse("")).collect(Collectors.toList())));
     }
 
     public CompletionStage<Result> setKeysAsync(Http.Request request) {
@@ -72,28 +72,28 @@ public class CacheController extends Controller {
         for (int i = 0; i < models.size(); i++) {
             keyValues[i] = new KeyValue(models.get(i).key, models.get(i).value);
         }
-        return cacheService.setKeysAsync(keyValues).thenApply(v -> ResultUtil.success("caches", models));
+        return cacheService.setAsyncKeys(keyValues).thenApply(v -> ResultUtil.success("caches", models));
     }
 
     public CompletionStage<Result> removeKeysAsync(Http.Request request) {
         List<String> models = RequestUtil.getRequestJsonList(request, "models", String.class);
-        return cacheService.removeKeysAsync(models.toArray(new String[models.size()])).thenApply(v -> ResultUtil.success("caches", models));
+        return cacheService.removeAsyncKeys(models.toArray(new String[models.size()])).thenApply(v -> ResultUtil.success("caches", models));
     }
 
     public Result setAsyncList(Http.Request request) {
         List<CacheView> models = RequestUtil.getRequestJsonList(request, "models", CacheView.class);
-        cacheService.setAsyncList(models);
+//        cacheService.setAsyncList(models);
         return ResultUtil.success();
     }
 
-    public CompletionStage<Result> getAsyncList(Http.Request request) {
+    public Result getAsyncList(Http.Request request) {
         List<String> models = RequestUtil.getRequestJsonList(request, "models", String.class);
-        return cacheService.getAsyncList(models).thenApplyAsync(v -> ResultUtil.success("cache", v));
+        return ResultUtil.success("cache", cacheService.getAsyncListKeys(models));
     }
 
     public Result removeAsyncList(Http.Request request) {
-        List<CacheView> models = RequestUtil.getRequestJsonList(request, "models", CacheView.class);
-        cacheService.removeAsyncList(models);
+//        List<CacheView> models = RequestUtil.getRequestJsonList(request, "models", CacheView.class);
+//        cacheService.removeAsyncListKeys(models);
         return ResultUtil.success();
     }
 }

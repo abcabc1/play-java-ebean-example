@@ -1,29 +1,26 @@
-package models.ecommerce.promotion;
+package models.ecommerce.merchandise.view;
 
-import io.ebean.Finder;
-import models.base.BasicSimpleModel;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import io.ebean.Model;
 
 /*
-秒杀
+商品集合
  */
-@Entity
-@Table
-public class ActivityMs extends BasicSimpleModel {
+public class MerchandiseRangeView extends Model {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToOne
-    public Activity activity;
-    public static final Finder<Long, ActivityMs> find = new Finder<>(ActivityMs.class, "ecommerce");
+    public Long merchandiseId;
+    public Long merchandiseTagId;
+    public Long merchandiseStoreId;
+
+    public String toString() {
+        return new StringBuilder().append("merchandiseId: ").append(merchandiseId).append(", merchandiseTagId: ").append(merchandiseTagId).append(", merchandiseStoreId: ").append(merchandiseStoreId).toString();
+    }
 
 /*
     @JsonBackReference(value = "operatorPass")
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '111111' COMMENT '密码'")
-    public String operatorPass;
+    public String operatorPass;ø
 */
         
  /*

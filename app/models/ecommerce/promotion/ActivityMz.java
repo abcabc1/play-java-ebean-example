@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/*
+满赠
+ */
 @Entity
 @Table
 public class ActivityMz extends BasicSimpleModel {

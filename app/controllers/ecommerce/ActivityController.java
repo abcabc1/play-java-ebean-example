@@ -2,8 +2,6 @@ package controllers.ecommerce;
 
 import models.ecommerce.customer.User;
 import models.ecommerce.merchandise.Merchandise;
-import models.ecommerce.promotion.Activity;
-import models.iplay.view.CacheView;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -14,10 +12,7 @@ import utils.http.RequestUtil;
 import utils.http.ResultUtil;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
 
 public class ActivityController extends Controller {
 
@@ -32,30 +27,30 @@ public class ActivityController extends Controller {
         this.cacheService = cacheService;
     }
 
-    public CompletionStage<Result> getActivityByRange(Http.Request request) {
+    public Result getActivityByRange(Http.Request request) {
         List<Merchandise> merchandiseList = RequestUtil.getRequestJsonList(request, "models", Merchandise.class);
         List<User> userList = RequestUtil.getRequestJsonList(request, "models", User.class);
         List<String> stringList = null;//saleService.getActivityKeysByRange(merchandiseList, userList);
-        return cacheService.getAsyncList(stringList).thenApply(v -> ResultUtil.success("cache", v.stream().flatMap(Collection::stream).collect(Collectors.toList())));
+        return ResultUtil.success("cache", cacheService.getAsyncListKeys(stringList));
     }
 
-    public CompletionStage<Result> getActivity(Http.Request request) {
+    public Result getActivity(Http.Request request) {
         List<String> models = RequestUtil.getRequestJsonList(request, "models", String.class);
-        return cacheService.getAsyncList(models).thenApply(v -> ResultUtil.success("cache", v.stream().flatMap(Collection::stream).collect(Collectors.toList())));
+        return ResultUtil.success("cache", cacheService.getAsyncListKeys(models));
 //        return cacheService.getAsyncList(models).thenApplyAsync(v -> ResultUtil.success("cache", v.stream().flatMap(Collection::stream).collect(Collectors.toList())), httpExecutionContext.current());
     }
 
     public Result removeActivity(Http.Request request) {
-        List<CacheView> models = RequestUtil.getRequestJsonList(request, "models", CacheView.class);
-        cacheService.removeAsyncList(models);
+//        List<CacheView> models = RequestUtil.getRequestJsonList(request, "models", CacheView.class);
+//        cacheService.removeAsyncList(models);
         return ResultUtil.success();
     }
 
     public Result setActivity(Http.Request request) {
-        List<Activity> models = RequestUtil.getRequestJsonList(request, "models", Activity.class);
-        List<CacheView> cacheViewList = saleService.buildCacheViewList(models);
-//        List<CacheView> cacheViewList = models.stream().map(saleService::getCacheView).flatMap(Collection::stream).collect(Collectors.toList());
-        cacheService.setAsyncList(cacheViewList);
+//        List<Activity> models = RequestUtil.getRequestJsonList(request, "models", Activity.class);
+//        List<CacheView> cacheViewList = saleService.buildCacheViewList(models);
+////        List<CacheView> cacheViewList = models.stream().map(saleService::getCacheView).flatMap(Collection::stream).collect(Collectors.toList());
+//        cacheService.setAsyncList(cacheViewList);
         return ResultUtil.success();
     }
 

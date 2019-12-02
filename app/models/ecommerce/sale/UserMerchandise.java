@@ -1,24 +1,32 @@
-package models.ecommerce.promotion;
+package models.ecommerce.sale;
 
 import io.ebean.Finder;
-import models.base.BasicSimpleModel;
+import models.base.BasicModel;
+import models.ecommerce.customer.User;
+import models.ecommerce.merchandise.Merchandise;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /*
-秒杀
+客户商品
  */
 @Entity
 @Table
-public class ActivityMs extends BasicSimpleModel {
+public class UserMerchandise extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @OneToOne
-    public Activity activity;
-    public static final Finder<Long, ActivityMs> find = new Finder<>(ActivityMs.class, "ecommerce");
+    @ManyToOne
+    @JoinColumn(name = "user")
+    public User user;
+
+    @ManyToOne
+    @JoinColumn(name = "merchandise")
+    public Merchandise merchandise;
+    public static final Finder<Long, UserMerchandise> find = new Finder<>(UserMerchandise.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")

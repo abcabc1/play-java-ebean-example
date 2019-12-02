@@ -7,6 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/*
+套餐
+ */
 @Entity
 @Table
 public class Pack extends BasicModel {

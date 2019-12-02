@@ -7,6 +7,9 @@ import models.ecommerce.common.Config;
 
 import javax.persistence.*;
 
+/*
+客户
+ */
 @Entity
 @Table
 public class User extends BasicModel {

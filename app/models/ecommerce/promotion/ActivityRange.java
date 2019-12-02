@@ -6,6 +6,9 @@ import models.base.BasicModel;
 import javax.persistence.*;
 import java.util.List;
 
+/*
+活动集合
+ */
 @Entity
 @Table
 public class ActivityRange extends BasicModel {

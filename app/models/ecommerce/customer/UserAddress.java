@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/*
+客户地址
+ */
 @Entity
 @Table
 public class UserAddress extends BasicModel {

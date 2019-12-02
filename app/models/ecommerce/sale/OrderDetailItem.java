@@ -5,7 +5,9 @@ import models.base.BasicModel;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
+/*
+订单明细项目
+ */
 @Entity
 @Table
 public class OrderDetailItem extends BasicModel {

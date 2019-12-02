@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/*
+商户标签
+ */
 @Entity
 @Table
 public class StoreTag extends BasicModel {

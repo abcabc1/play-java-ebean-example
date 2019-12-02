@@ -7,6 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/*
+订单
+ */
 @Entity
 @Table
 public class OrderMain extends BasicModel {

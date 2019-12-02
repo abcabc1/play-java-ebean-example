@@ -7,6 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/*
+地址
+ */
 @Entity
 @Table
 public class Address extends BasicModel {

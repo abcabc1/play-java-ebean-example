@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/*
+活动券
+ */
 @Entity
 @Table
 public class ActivityQ extends BasicModel {

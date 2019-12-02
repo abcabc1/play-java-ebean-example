@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/*
+客户区域
+ */
 @Entity
 @Table
 public class UserArea extends BasicModel {
