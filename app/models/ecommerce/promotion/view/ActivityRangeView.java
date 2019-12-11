@@ -1,32 +1,31 @@
-package models.ecommerce.customer;
+package models.ecommerce.promotion.view;
 
 import io.ebean.Finder;
-import models.base.BasicModel;
-import models.ecommerce.common.Config;
+import io.ebean.Model;
+import models.ecommerce.merchandise.view.MerchandiseCodeView;
+import models.ecommerce.user.view.CustomerCodeView;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
-/*
-客户区域
- */
-@Entity
-@Table
-public class UserArea extends BasicModel {
+public class ActivityRangeView extends Model {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    public User user;
+    public boolean rangeCustomerBlackWhite;
 
     @ManyToOne
-    @JoinColumn(name = "area")
-    public Config area;
+    public CustomerCodeView customerCodeView;
 
-    public static final Finder<Long, UserArea> find = new Finder<>(UserArea.class, "ecommerce");
+    public boolean rangeMerchandiseBlackWhite;
 
+    @ManyToOne
+    public MerchandiseCodeView merchandiseCodeView;
+
+    public static final Finder<Long, ActivityRangeView> find = new Finder<>(ActivityRangeView.class, "default");
+
+    public String toString() {
+        return (rangeCustomerBlackWhite ? "+" : "-") + customerCodeView + "|" + (rangeMerchandiseBlackWhite ? "+" : "-") + merchandiseCodeView;
+    }
 /*
     @JsonBackReference(value = "operatorPass")
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '111111' COMMENT '密码'")

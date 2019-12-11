@@ -1,29 +1,23 @@
-package models.ecommerce.customer;
+package models.ecommerce.user.view;
 
-import io.ebean.Finder;
-import models.base.BasicModel;
-import models.ecommerce.common.Config;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import io.ebean.Model;
 
 /*
-客户证照
+客户集合
  */
-@Entity
-@Table
-public class UserLicense extends BasicModel {
+public class CustomerCodeView extends Model {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    public User user;
+    public long customerId;
+    public long customerTagId;
+    public long customerAreaId;
+    public long customerCategoryId;
+    public long id;
 
-    @ManyToOne
-    public Config license;
-
-    public static final Finder<Long, UserLicense> find = new Finder<>(UserLicense.class, "ecommerce");
+    public String toString() {
+        return new StringBuilder().append("customerId: ").append(customerId).append(", customerTagId: ").append(customerTagId).append(", customerAreaId: ").append(customerAreaId).append(", customerCategoryId: ").append(customerCategoryId).toString();
+    }
 
 /*
     @JsonBackReference(value = "operatorPass")

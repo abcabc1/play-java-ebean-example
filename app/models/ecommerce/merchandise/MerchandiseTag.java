@@ -2,7 +2,7 @@ package models.ecommerce.merchandise;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.customer.UserTag;
+import models.ecommerce.user.CustomerTag;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -21,7 +21,7 @@ public class MerchandiseTag extends BasicModel {
     public Merchandise merchandise;
 
     @ManyToOne
-    public UserTag userTag;
+    public CustomerTag customerTag;
 
     public static final Finder<Long, MerchandiseTag> find = new Finder<>(MerchandiseTag.class, "ecommerce");
 

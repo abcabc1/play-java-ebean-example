@@ -1,22 +1,28 @@
-package models.ecommerce.customer.view;
+package models.ecommerce.user;
 
-import io.ebean.Model;
+import io.ebean.Finder;
+import models.base.BasicModel;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /*
-客户集合
+商户地址
  */
-public class UserRangeView extends Model {
+@Entity
+@Table
+public class StoreAddress extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    public Long userId;
-    public Long userTagId;
-    public Long userAreaId;
-    public Long userCategoryId;
+    @ManyToOne
+    public Store store;
 
-    public String toString(){
-        return new StringBuilder().append("userId: ").append(userId).append(", userTagId: ").append(userTagId).append(", userAreaId: ").append(userAreaId).append(", userCategoryId: ").append(userCategoryId).toString();
-    }
+    @ManyToOne
+    public Address address;
+
+    public static final Finder<Long, StoreAddress> find = new Finder<>(StoreAddress.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

@@ -21,7 +21,7 @@ public class Operator extends BasicModel {
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '111111' COMMENT '密码'")
     public String pass;
 
-    @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED DEFAULT 1  COMMENT '类别[0 admin, 1 user, 2 store]'")
+    @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED DEFAULT 1  COMMENT '类别[0 admin, 1 customer, 2 store]'")
     public Integer type;
 
     public static final Finder<Long, Operator> find = new Finder<>(Operator.class, "ecommerce");

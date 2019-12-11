@@ -1,9 +1,9 @@
-import models.ecommerce.customer.view.UserRangeView;
-import models.ecommerce.merchandise.view.MerchandiseRangeView;
+import models.ecommerce.merchandise.view.MerchandiseCodeView;
 import models.ecommerce.promotion.Activity;
 import models.ecommerce.promotion.ActivityRange;
+import models.ecommerce.promotion.ActivityRangeCustomer;
 import models.ecommerce.promotion.ActivityRangeMerchandise;
-import models.ecommerce.promotion.ActivityRangeUser;
+import models.ecommerce.user.view.CustomerCodeView;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +17,7 @@ import service.ecommerce.sale.SaleService;
 import utils.maths.CalculatorUtils;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -56,13 +57,36 @@ public class EcommerceTest extends WithApplication {
         await().atLeast(10, SECONDS);
     }
 
+    @Test
+    public void getActivityRangeMerchandiseListCache() throws ExecutionException, InterruptedException {
+        Long[][] customers = {
+                //{UU,UT,UA,UC}
+                {1L, 0L, 0L, 0L}
+//                , {2L, 1L, 0L, 0L}
+//                , {3L, 0L, 1L, 0L}
+//                , {4L, 0L, 0L, 1L}
+        };
+        List<Long> activityList = Arrays.asList(13L);
+        List<CustomerCodeView> customerCodeViewList = Arrays.stream(customers).map(v -> customerService.buildCustomerRangeView(v[0], v[1], v[2], v[3])).collect(Collectors.toList());
+        for (CustomerCodeView customerCodeView : customerCodeViewList) {
+            for (Long activityId : activityList) {
+                System.out.print(customerCodeView);
+                System.out.print(" - ");
+                System.out.println(activityId);
+//                cacheService.getAsyncListKeys(activityId.toString()).thenApplyAsync(v->saleService.resolveActivityRangeList(v).stream().filter(d->CustomerCodeView.match(customerCodeView, d.customerCodeView)).filter(d->d.rangeCustomerBlackWhite)).thenAcceptAsync(System.out::println);
+                cacheService.getAsyncListKeys(activityId.toString()).stream().map(v->saleService.resolveActivityRangeList(v)).forEach(v->System.out.println(v));
+                //.thenAcceptAsync(v->saleService.resolveActivityRangeList(v)).thenAcceptAsync(System.out::println);
+            }
+        }
+    }
+
     /*
     获取用户商品匹配的活动
      */
     @Test
     public void getActivityListCache() {
         Set<String> set = cacheService.getAsyncSetKeys(Arrays.asList("ALL")).stream().flatMap(Collection::stream).collect(Collectors.toSet());
-        Long[][] users = {
+        Long[][] customers = {
                 //{UU,UT,UA,UC}
                 {1L, 0L, 0L, 0L}
                 , {2L, 1L, 0L, 0L}
@@ -75,13 +99,13 @@ public class EcommerceTest extends WithApplication {
                 , {2L, 1L, 1L}
                 , {3L, 2L, 2L}
         };
-        List<UserRangeView> userRangeViewList = Arrays.stream(users).map(v -> customerService.buildUserRangeView(v[0], v[1], v[2], v[3])).collect(Collectors.toList());
-        List<MerchandiseRangeView> merchandiseRangeViewList = Arrays.stream(merchandises).map(v -> merchandiseService.buildMerchandiseRangeView(v[0], v[1], v[2])).collect(Collectors.toList());
-        for (UserRangeView userRangeView : userRangeViewList) {
-            System.out.println(userRangeView);
-            for (MerchandiseRangeView merchandiseRangeView : merchandiseRangeViewList) {
-                List<String> keyList = saleService.buildActivityRangeKeyList(userRangeView, merchandiseRangeView);
-                System.out.print(merchandiseRangeView);
+        List<CustomerCodeView> customerCodeViewList = Arrays.stream(customers).map(v -> customerService.buildCustomerRangeView(v[0], v[1], v[2], v[3])).collect(Collectors.toList());
+        List<MerchandiseCodeView> merchandiseCodeViewList = Arrays.stream(merchandises).map(v -> merchandiseService.buildMerchandiseRangeView(v[0], v[1], v[2])).collect(Collectors.toList());
+        for (CustomerCodeView customerCodeView : customerCodeViewList) {
+            System.out.println(customerCodeView);
+            for (MerchandiseCodeView merchandiseCodeView : merchandiseCodeViewList) {
+                List<String> keyList = saleService.buildActivityRangeKeyList(customerCodeView, merchandiseCodeView);
+                System.out.print(merchandiseCodeView);
                 System.out.println(CalculatorUtils.unionRelative(cacheService.getAsyncSetKeys(keyList).stream().flatMap(Collection::stream).collect(Collectors.toSet()), set));
             }
             System.out.println();
@@ -101,7 +125,7 @@ public class EcommerceTest extends WithApplication {
     }
 
     private List<Activity> buildActivityData() {
-        String[][] datass = {
+        String[][] data = {
 //                 0  1   2      3   4        5   6   7   8   9   10     11       12  13  14  15
 //                {A, AR, RU_BW, RU, RU_TYPE, UU, UT, UA, UC, RM, RM_BW, RM_TYPE, MM, MT, MS, REMARK}
 //                {"1", "1", "+", "1", "UU", "1", "", "", "", "1", "+", "MM", "1", "", "", "活动1   用户1商品1"}
@@ -129,7 +153,7 @@ public class EcommerceTest extends WithApplication {
                 , {"12", "12", "+", "13", "UU", "1", "", "", "", "21", "+", "MS", "", "", "2", "活动12 用户1商品商户2"}
                 , {"13", "13", "+", "14", "UU", "1", "", "", "", "22", "-", "MS", "", "", "1", "活动13 用户1商品商户1-"}
         };
-        return buildActitityList(datass);
+        return buildActivityList(data);
 //        Arrays.stream(datas).flatMap(v-> Stream.of(v[0])).distinct().forEach(System.out::println);
 //        Arrays.stream(datas).map(v-> buildActivity(v[0])).distinct().forEach(System.out::println);
 //        Arrays.stream(datass).filter(v -> !("".equals(v))).map(v -> buildActivityRangeUser(v[7], v[8], v[9], v[10], v[11], v[12])).distinct().forEach(v -> userList.add(v));
@@ -139,33 +163,33 @@ public class EcommerceTest extends WithApplication {
     构建活动集合
      */
     @NotNull
-    public List<Activity> buildActitityList(String[][] datas) {
+    public List<Activity> buildActivityList(String[][] activityRangeItems) {
         List<Activity> activityList = new ArrayList<>();
         Activity currentActivity = null;
         ActivityRange currentActivityRange = null;
-        ActivityRangeUser currentActivityRangeUser = null;
-        ActivityRangeMerchandise currentActivityRangeMerchandise = null;
+        ActivityRangeCustomer currentActivityCustomer = null;
+        ActivityRangeMerchandise currentActivityMerchandise = null;
 
-        for (String[] data : datas) {
-            String activityId = data[0], activityRangeId = data[1], activityRangeUserBlackWhite = data[2], activityRangeMerchandiseBlackWhite = data[10], activityRangeUserId = data[3], activityRangeUserType = data[4], activityRangeUserUser = data[5], activityRangeUserTag = data[6], activityRangeUserArea = data[7], activityRangeUserCategory = data[8], activityRangeMerchandiseId = data[9], activityRangeMerchandiseType = data[11], activityRangeMerchandiseMerchandise = data[12], activityRangeMerchandiseTag = data[13], activityRangeMerchandiseStoreId = data[14];
+        for (String[] data : activityRangeItems) {
+            String activityId = data[0], activityRangeId = data[1], activityRangeCustomerBlackWhite = data[2], activityRangeMerchandiseBlackWhite = data[10], activityRangeUserId = data[3], activityRangeUserType = data[4], activityRangeUserUser = data[5], activityRangeUserTag = data[6], activityRangeUserArea = data[7], activityRangeUserCategory = data[8], activityRangeMerchandiseId = data[9], activityRangeMerchandiseType = data[11], activityRangeMerchandiseMerchandise = data[12], activityRangeMerchandiseTag = data[13], activityRangeMerchandiseStoreId = data[14];
             if (saleService.checkActivityValid(activityId) && (currentActivity == null || currentActivity.id != Long.parseLong(activityId))) {
                 currentActivity = saleService.buildActivity(activityId);
                 activityList.add(currentActivity);
             }
-            if (saleService.checkActivityRangeValid(activityRangeId, activityRangeUserBlackWhite, activityRangeMerchandiseBlackWhite) && (currentActivityRange == null || currentActivityRange.id != Long.parseLong(activityRangeId))) {
-                currentActivityRange = saleService.buildActivityRange(activityRangeId, activityRangeUserBlackWhite, activityRangeMerchandiseBlackWhite);
+            if (saleService.checkActivityRangeValid(activityRangeId, activityRangeCustomerBlackWhite, activityRangeMerchandiseBlackWhite) && (currentActivityRange == null || currentActivityRange.id != Long.parseLong(activityRangeId))) {
+                currentActivityRange = saleService.buildActivityRange(activityRangeId, activityRangeCustomerBlackWhite, activityRangeMerchandiseBlackWhite);
                 currentActivityRange.activity = currentActivity;
                 currentActivity.activityRangeList.add(currentActivityRange);
             }
-            if (saleService.checkActivityRangeUserValid(activityRangeUserId, activityRangeUserType, activityRangeUserUser, activityRangeUserTag, activityRangeUserArea, activityRangeUserCategory) && (currentActivityRangeUser == null || currentActivityRangeUser.id != Long.parseLong(activityRangeUserId))) {
-                currentActivityRangeUser = saleService.buildActivityRangeUser(activityRangeUserId, activityRangeUserType, activityRangeUserUser, activityRangeUserTag, activityRangeUserArea, activityRangeUserCategory);
-                currentActivityRangeUser.activityRange = currentActivityRange;
-                currentActivityRange.activityRangeUserList.add(currentActivityRangeUser);
+            if (saleService.checkActivityRangeCustomerValid(activityRangeUserId, activityRangeUserType, activityRangeUserUser, activityRangeUserTag, activityRangeUserArea, activityRangeUserCategory) && (currentActivityCustomer == null || currentActivityCustomer.id != Long.parseLong(activityRangeUserId))) {
+                currentActivityCustomer = saleService.buildActivityRangeCustomer(activityRangeUserId, activityRangeUserType, activityRangeUserUser, activityRangeUserTag, activityRangeUserArea, activityRangeUserCategory);
+                currentActivityCustomer.activityRange = currentActivityRange;
+                currentActivityRange.activityRangeCustomerList.add(currentActivityCustomer);
             }
-            if (saleService.checkActivityRangeMerchandiseValid(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag, activityRangeMerchandiseStoreId) && (currentActivityRangeMerchandise == null || currentActivityRangeMerchandise.id != Long.parseLong(activityRangeMerchandiseId))) {
-                currentActivityRangeMerchandise = saleService.buildActivityRangeMerchandise(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag, activityRangeMerchandiseStoreId);
-                currentActivityRangeMerchandise.activityRange = currentActivityRange;
-                currentActivityRange.activityRangeMerchandiseList.add(currentActivityRangeMerchandise);
+            if (saleService.checkActivityRangeMerchandiseValid(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag, activityRangeMerchandiseStoreId) && (currentActivityMerchandise == null || currentActivityMerchandise.id != Long.parseLong(activityRangeMerchandiseId))) {
+                currentActivityMerchandise = saleService.buildActivityRangeMerchandise(activityRangeMerchandiseId, activityRangeMerchandiseType, activityRangeMerchandiseMerchandise, activityRangeMerchandiseTag, activityRangeMerchandiseStoreId);
+                currentActivityMerchandise.activityRange = currentActivityRange;
+                currentActivityRange.activityRangeMerchandiseList.add(currentActivityMerchandise);
             }
         }
         return activityList;

@@ -1,4 +1,4 @@
-package service.words;
+package service.words.en;
 
 import com.typesafe.config.Config;
 import models.words.ListenWord;

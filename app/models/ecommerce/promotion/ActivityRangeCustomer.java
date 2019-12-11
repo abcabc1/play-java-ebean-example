@@ -2,10 +2,10 @@ package models.ecommerce.promotion;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.customer.User;
-import models.ecommerce.customer.UserArea;
-import models.ecommerce.customer.UserCategory;
-import models.ecommerce.customer.UserTag;
+import models.ecommerce.user.Customer;
+import models.ecommerce.user.CustomerArea;
+import models.ecommerce.user.CustomerCategory;
+import models.ecommerce.user.CustomerTag;
 
 import javax.persistence.*;
 
@@ -14,7 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table
-public class ActivityRangeUser extends BasicModel {
+public class ActivityRangeCustomer extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,24 +22,24 @@ public class ActivityRangeUser extends BasicModel {
     public ActivityRange activityRange;
 
     @Column(nullable = false, columnDefinition = "CHAR(2) DEFAULT 'UU' COMMENT '类别:[UU 用户, UT 标签, UA 区域, UC 类型]'")
-    public String userType;
+    public String customerType;
 
     @ManyToOne
-    public User user;
+    public Customer customer;
 
     @ManyToOne
-    public UserTag userTag;
+    public CustomerTag customerTag;
 
     @ManyToOne
-    public UserCategory userCategory;
+    public CustomerCategory customerCategory;
 
     @ManyToOne
-    public UserArea userArea;
+    public CustomerArea customerArea;
 
     @Transient
-    public String code;
+    public Long customerId;
 
-    public static final Finder<Long, ActivityRangeUser> find = new Finder<>(ActivityRangeUser.class, "ecommerce");
+    public static final Finder<Long, ActivityRangeCustomer> find = new Finder<>(ActivityRangeCustomer.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

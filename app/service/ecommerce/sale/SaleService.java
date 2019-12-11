@@ -1,36 +1,66 @@
 package service.ecommerce.sale;
 
-import models.ecommerce.customer.User;
-import models.ecommerce.customer.UserArea;
-import models.ecommerce.customer.UserCategory;
-import models.ecommerce.customer.UserTag;
-import models.ecommerce.customer.view.UserRangeView;
 import models.ecommerce.merchandise.Merchandise;
 import models.ecommerce.merchandise.MerchandiseTag;
-import models.ecommerce.merchandise.view.MerchandiseRangeView;
+import models.ecommerce.merchandise.view.MerchandiseCodeView;
 import models.ecommerce.promotion.Activity;
 import models.ecommerce.promotion.ActivityRange;
+import models.ecommerce.promotion.ActivityRangeCustomer;
 import models.ecommerce.promotion.ActivityRangeMerchandise;
-import models.ecommerce.promotion.ActivityRangeUser;
-import models.ecommerce.sale.MerchandiseStore;
+import models.ecommerce.promotion.view.ActivityRangeView;
+import models.ecommerce.sale.StoreMerchandise;
+import models.ecommerce.user.Customer;
+import models.ecommerce.user.CustomerArea;
+import models.ecommerce.user.CustomerCategory;
+import models.ecommerce.user.CustomerTag;
+import models.ecommerce.user.view.CustomerCodeView;
 import org.jetbrains.annotations.NotNull;
 import play.cache.redis.KeyValue;
 import service.ecommerce.customer.CustomerService;
 import service.ecommerce.merchandise.MerchandiseService;
 import utils.maths.CalculatorUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SaleService {
+
+    public List<ActivityRangeView> resolveActivityRangeList(List<String> list) {
+        List<ActivityRangeView> activityRangeViewList = new ArrayList<>();
+        for (String value : list) {
+            boolean blackWhite = "+".equals(value.substring(0, 1));
+            String[] subValues = value.substring(1).split("\\|");
+            ActivityRangeView activityRangeView = new ActivityRangeView();
+            activityRangeView.rangeCustomerBlackWhite = blackWhite;
+            activityRangeView.rangeMerchandiseBlackWhite = true;
+            activityRangeView.customerCodeView = buildCustomerCodeView(subValues[0]);
+            activityRangeView.merchandiseCodeView = MerchandiseCodeView.buildFromCacheValue(subValues[1]);
+            activityRangeViewList.add(activityRangeView);
+        }
+        return activityRangeViewList;
+    }
+
+    public ActivityRangeView resolveActivityRangeList(String value) {
+        boolean blackWhite = "+".equals(value.substring(0, 1));
+        String[] subValues = value.substring(1).split("\\|");
+        ActivityRangeView activityRangeView = new ActivityRangeView();
+        activityRangeView.rangeCustomerBlackWhite = blackWhite;
+        activityRangeView.rangeMerchandiseBlackWhite = true;
+        activityRangeView.customerCodeView = buildCustomerCodeView(subValues[0]);
+        activityRangeView.merchandiseCodeView = MerchandiseCodeView.buildFromCacheValue(subValues[1]);
+        return activityRangeView;
+    }
 
     /*
     为一组用户及一组商品构造匹配规则
      */
-    public List<String> buildActivityRangeKeyList(List<UserRangeView> userRangeViewList, List<MerchandiseRangeView> merchandiseRangeViewList) {
+    public List<String> buildActivityRangeKeyList(List<CustomerCodeView> customerCodeViewList, List<MerchandiseCodeView> merchandiseCodeViewList) {
         List<String> list = new ArrayList<>();
-        for (UserRangeView userRangeView : userRangeViewList) {
-            for (MerchandiseRangeView merchandiseRangeView : merchandiseRangeViewList) {
-                list.addAll(buildActivityRangeKeyList(userRangeView, merchandiseRangeView));
+        for (CustomerCodeView customerCodeView : customerCodeViewList) {
+            for (MerchandiseCodeView merchandiseCodeView : merchandiseCodeViewList) {
+                list.addAll(buildActivityRangeKeyList(customerCodeView, merchandiseCodeView));
             }
         }
         return list;
@@ -39,14 +69,14 @@ public class SaleService {
     /*
     构造指定用户及指定商品构造匹配规则
      */
-    public List<String> buildActivityRangeKeyList(UserRangeView userRangeView, MerchandiseRangeView merchandiseRangeView) {
+    public List<String> buildActivityRangeKeyList(CustomerCodeView customerCodeView, MerchandiseCodeView merchandiseCodeView) {
         List<String> list = new ArrayList<>();
-        List<String> userList = CustomerService.getUserRangeViewCodeList(userRangeView);
-        List<String> merchandiseList = MerchandiseService.getMerchandiseRangeViewCodeList(merchandiseRangeView);
-        for (String user : userList) {
+        List<String> customerList = CustomerService.getCustomerRangeViewCodeList(customerCodeView);
+        List<String> merchandiseList = MerchandiseService.getMerchandiseRangeViewCodeList(merchandiseCodeView);
+        for (String customer : customerList) {
             for (String merchandise : merchandiseList) {
-                list.add(user + "|" + merchandise);
-                list.add(user + "|" + "ALL");
+                list.add(customer + "|" + merchandise);
+                list.add(customer + "|" + "ALL");
                 list.add("ALL" + "|" + merchandise);
             }
         }
@@ -68,8 +98,8 @@ public class SaleService {
                 }
             }
         }
-        for (Iterator it = keySet.iterator(); it.hasNext(); ) {
-            keyValueList.add(new KeyValue("ALL", "-" + it.next()));
+        for (String s : keySet) {
+            keyValueList.add(new KeyValue("ALL", "-" + s));
         }
         return keyValueList;
     }
@@ -83,7 +113,7 @@ public class SaleService {
             List<KeyValue> tempList = buildKeyValue(activity);
             keyValueList.addAll(tempList);
             for (ActivityRange activityRange : activity.activityRangeList) {
-                if (!(CalculatorUtils.getBooleanResult(activityRange.rangeUserBlackWhite, activityRange.rangeMerchandiseBlackWhite))) {
+                if (!(CalculatorUtils.getBooleanResult(activityRange.rangeCustomerBlackWhite, activityRange.rangeMerchandiseBlackWhite))) {
                     KeyValue keyValue = new KeyValue("ALL", "-" + activity.id);
                     keyValueList.add(keyValue);
                 }
@@ -120,21 +150,21 @@ public class SaleService {
 
         for (ActivityRange activityRange : activity.activityRangeList) {
             List<ActivityRangeMerchandise> activityRangeMerchandiseList = new ArrayList<>();
-            List<ActivityRangeUser> activityRangeUserList = new ArrayList<>();
-            for (ActivityRangeUser activityRangeUser : activityRange.activityRangeUserList) {
-                buildActivityRangeUserCode(activityRangeUser);
-                activityRangeUserList.add(activityRangeUser);
+            List<ActivityRangeCustomer> activityRangeCustomerList = new ArrayList<>();
+            for (ActivityRangeCustomer activityRangeCustomer : activityRange.activityRangeCustomerList) {
+                buildActivityRangeCustomerCode(activityRangeCustomer);
+                activityRangeCustomerList.add(activityRangeCustomer);
             }
             for (ActivityRangeMerchandise activityRangeMerchandise : activityRange.activityRangeMerchandiseList) {
                 buildActivityRangeMerchandiseCode(activityRangeMerchandise);
                 activityRangeMerchandiseList.add(activityRangeMerchandise);
             }
             for (ActivityRangeMerchandise activityRangeMerchandise : activityRangeMerchandiseList) {
-                for (ActivityRangeUser activityRangeUser : activityRangeUserList) {
-                    String value = (CalculatorUtils.getBooleanResult(activityRange.rangeUserBlackWhite, activityRange.rangeMerchandiseBlackWhite) ? "+" : "-")
-                            + activityRangeUser.userType + activityRangeUser.code
+                for (ActivityRangeCustomer activityRangeCustomer : activityRangeCustomerList) {
+                    String value = (CalculatorUtils.getBooleanResult(activityRange.rangeCustomerBlackWhite, activityRange.rangeMerchandiseBlackWhite) ? "+" : "-")
+                            + activityRangeCustomer.customerType + activityRangeCustomer.customerId
                             + "|"
-                            + activityRangeMerchandise.merchandiseType + activityRangeMerchandise.code;
+                            + activityRangeMerchandise.merchandiseType + activityRangeMerchandise.merchandiseId;
                     KeyValue keyValue = new KeyValue(key, value);
                     keyValueList.add(keyValue);
                 }
@@ -146,22 +176,22 @@ public class SaleService {
     /*
     归并活动用户集合
      */
-    public void buildActivityRangeUserCode(ActivityRangeUser activityRangeUser) {
-        switch (activityRangeUser.userType) {
+    public void buildActivityRangeCustomerCode(ActivityRangeCustomer activityRangeCustomer) {
+        switch (activityRangeCustomer.customerType) {
             case "UU":
-                activityRangeUser.code = activityRangeUser.user.id.toString();
+                activityRangeCustomer.customerId = activityRangeCustomer.customer.id;
                 break;
             case "UT":
-                activityRangeUser.code = activityRangeUser.userTag.id.toString();
+                activityRangeCustomer.customerId = activityRangeCustomer.customerTag.id;
                 break;
             case "UA":
-                activityRangeUser.code = activityRangeUser.userArea.id.toString();
+                activityRangeCustomer.customerId = activityRangeCustomer.customerArea.id;
                 break;
             case "UC":
-                activityRangeUser.code = activityRangeUser.userCategory.id.toString();
+                activityRangeCustomer.customerId = activityRangeCustomer.customerCategory.id;
                 break;
             case "ALL":
-                activityRangeUser.code = "";
+                activityRangeCustomer.customerId = 0L;
                 break;
         }
     }
@@ -172,16 +202,16 @@ public class SaleService {
     public void buildActivityRangeMerchandiseCode(ActivityRangeMerchandise activityRangeMerchandise) {
         switch (activityRangeMerchandise.merchandiseType) {
             case "MM":
-                activityRangeMerchandise.code = activityRangeMerchandise.merchandise.id.toString();
+                activityRangeMerchandise.merchandiseId = activityRangeMerchandise.merchandise.id;
                 break;
             case "MT":
-                activityRangeMerchandise.code = activityRangeMerchandise.merchandiseTag.id.toString();
+                activityRangeMerchandise.merchandiseId = activityRangeMerchandise.merchandiseTag.id;
                 break;
             case "MS":
-                activityRangeMerchandise.code = activityRangeMerchandise.merchandiseStore.id.toString();
+                activityRangeMerchandise.merchandiseId = activityRangeMerchandise.storeMerchandise.id;
                 break;
             case "ALL":
-                activityRangeMerchandise.code = "";
+                activityRangeMerchandise.merchandiseId = 0L;
                 break;
         }
     }
@@ -209,12 +239,12 @@ public class SaleService {
     构建活动规则实体
      */
     @NotNull
-    public ActivityRange buildActivityRange(String activityRangeId, String rangeUserBlackWhite, String rangeMerchandiseBlackWhite) {
+    public ActivityRange buildActivityRange(String activityRangeId, String rangeCustomerBlackWhite, String rangeMerchandiseBlackWhite) {
         ActivityRange activityRange;
         activityRange = new ActivityRange();
         activityRange.id = Long.valueOf(activityRangeId);
-        activityRange.rangeUserBlackWhite = rangeUserBlackWhite.equals("+");
-        activityRange.activityRangeUserList = new ArrayList<>();
+        activityRange.rangeCustomerBlackWhite = rangeCustomerBlackWhite.equals("+");
+        activityRange.activityRangeCustomerList = new ArrayList<>();
         activityRange.rangeMerchandiseBlackWhite = rangeMerchandiseBlackWhite.equals("+");
         activityRange.activityRangeMerchandiseList = new ArrayList<>();
         return activityRange;
@@ -224,33 +254,34 @@ public class SaleService {
     构建活动用户集合实体
      */
     @NotNull
-    public ActivityRangeUser buildActivityRangeUser(String activityRangeUserId, String activityRangeUserType, String activityRangeUserUserId, String activityRangeUserTagId, String activityRangeUserAreaId, String activityRangeUserCategoryId) {
-        ActivityRangeUser activityRangeUser;
-        activityRangeUser = new ActivityRangeUser();
-        activityRangeUser.id = Long.valueOf(activityRangeUserId);
-        activityRangeUser.userType = activityRangeUserType;
-        switch (activityRangeUserType) {
+    public ActivityRangeCustomer buildActivityRangeCustomer(String activityRangeCustomerId, String activityRangeCustomerType, String activityRangeCustomerCustomerId, String activityRangeCustomerTagId, String activityRangeCustomerAreaId, String activityRangeCustomerCategoryId) {
+        ActivityRangeCustomer activityRangeCustomer;
+        activityRangeCustomer = new ActivityRangeCustomer();
+        activityRangeCustomer.id = Long.valueOf(activityRangeCustomerId);
+        activityRangeCustomer.customerType = activityRangeCustomerType;
+        switch (activityRangeCustomerType) {
             case "UU":
-                activityRangeUser.user = new User();
-                activityRangeUser.user.id = Long.valueOf(activityRangeUserUserId);
+                activityRangeCustomer.customer = new Customer();
+                activityRangeCustomer.customer.id = Long.valueOf(activityRangeCustomerCustomerId);
                 break;
             case "UT":
-                activityRangeUser.userTag = new UserTag();
-                activityRangeUser.userTag.id = Long.parseLong(activityRangeUserTagId);
+                activityRangeCustomer.customerTag = new CustomerTag();
+                activityRangeCustomer.customerTag.id = Long.parseLong(activityRangeCustomerTagId);
                 break;
             case "UA":
-                activityRangeUser.userArea = new UserArea();
-                activityRangeUser.userArea.id = Long.parseLong(activityRangeUserAreaId);
+                activityRangeCustomer.customerArea = new CustomerArea();
+                activityRangeCustomer.customerArea.id = Long.parseLong(activityRangeCustomerAreaId);
                 break;
             case "UC":
-                activityRangeUser.userCategory = new UserCategory();
-                activityRangeUser.userCategory.id = Long.parseLong(activityRangeUserCategoryId);
+                activityRangeCustomer.customerCategory = new CustomerCategory();
+                activityRangeCustomer.customerCategory.id = Long.parseLong(activityRangeCustomerCategoryId);
                 break;
             case "ALL":
                 break;
         }
-        return activityRangeUser;
+        return activityRangeCustomer;
     }
+
 
     /*
     构建活动商品集合实体
@@ -271,8 +302,8 @@ public class SaleService {
                 activityRangeMerchandise.merchandiseTag.id = Long.parseLong(activityRangeMerchandiseTagId);
                 break;
             case "MS":
-                activityRangeMerchandise.merchandiseStore = new MerchandiseStore();
-                activityRangeMerchandise.merchandiseStore.id = Long.parseLong(activityRangeMerchandiseStoreId);
+                activityRangeMerchandise.storeMerchandise = new StoreMerchandise();
+                activityRangeMerchandise.storeMerchandise.id = Long.parseLong(activityRangeMerchandiseStoreId);
                 break;
             case "ALL":
                 break;
@@ -290,25 +321,22 @@ public class SaleService {
     /*
     校验活动集合
      */
-    public boolean checkActivityRangeValid(String activityRangeId, String activityRangeUserBlackWhite, String activityRangeMerchandiseBlackWhite) {
-        if (activityRangeId == null || ("".equals(activityRangeId.trim()))
-                || activityRangeUserBlackWhite == null || ("".equals(activityRangeUserBlackWhite.trim()))
-                || activityRangeMerchandiseBlackWhite == null || ("".equals(activityRangeMerchandiseBlackWhite.trim()))) {
-            return false;
-        }
-        return true;
+    public boolean checkActivityRangeValid(String activityRangeId, String activityRangeCustomerBlackWhite, String activityRangeMerchandiseBlackWhite) {
+        return activityRangeId != null && (!"".equals(activityRangeId.trim()))
+                && activityRangeCustomerBlackWhite != null && (!"".equals(activityRangeCustomerBlackWhite.trim()))
+                && activityRangeMerchandiseBlackWhite != null && (!"".equals(activityRangeMerchandiseBlackWhite.trim()));
     }
 
     /*
     校验活动用户集合
      */
-    public boolean checkActivityRangeUserValid(String activityRangeUserId, String activityRangeUserType, String activityRangeUserUser, String activityRangeUserTag, String activityRangeUserArea, String activityRangeUserCategory) {
-        if (activityRangeUserId == null || ("".equals(activityRangeUserId.trim()))
-                || activityRangeUserType == null || ("".equals(activityRangeUserType.trim()))
-                || activityRangeUserUser == null || activityRangeUserTag == null || activityRangeUserArea == null || activityRangeUserCategory == null) {
+    public boolean checkActivityRangeCustomerValid(String activityRangeCustomerId, String activityRangeCustomerType, String activityRangeCustomerCustomer, String activityRangeCustomerTag, String activityRangeCustomerArea, String activityRangeCustomerCategory) {
+        if (activityRangeCustomerId == null || ("".equals(activityRangeCustomerId.trim()))
+                || activityRangeCustomerType == null || ("".equals(activityRangeCustomerType.trim()))
+                || activityRangeCustomerCustomer == null || activityRangeCustomerTag == null || activityRangeCustomerArea == null || activityRangeCustomerCategory == null) {
             return false;
         }
-        return ("ALL".equalsIgnoreCase(activityRangeUserType) || !("".equals(activityRangeUserUser.trim())) || !("".equals(activityRangeUserTag.trim())) || !("".equals(activityRangeUserArea.trim())) || !("".equals(activityRangeUserCategory.trim())));
+        return ("ALL".equalsIgnoreCase(activityRangeCustomerType) || !("".equals(activityRangeCustomerCustomer.trim())) || !("".equals(activityRangeCustomerTag.trim())) || !("".equals(activityRangeCustomerArea.trim())) || !("".equals(activityRangeCustomerCategory.trim())));
     }
 
     /*
@@ -321,5 +349,28 @@ public class SaleService {
             return false;
         }
         return "ALL".equalsIgnoreCase(activityRangeMerchandiseType) || !("".equals(activityRangeMerchandiseMerchandise.trim())) || !("".equals(activityRangeMerchandiseTag.trim())) || !("".equals(activityRangeMerchandiseStore.trim()));
+    }
+
+    public CustomerCodeView buildCustomerCodeView(String s) {
+        Long id = Long.valueOf(s.substring(2));
+        CustomerCodeView customerCodeView = new CustomerCodeView();
+        switch (s.substring(0, 2)) {
+            case "UU":
+                customerCodeView.customerId = id;
+            case "UT":
+                customerCodeView.customerTagId = id;
+            case "UA":
+                customerCodeView.customerAreaId = id;
+            case "UC":
+                customerCodeView.customerCategoryId = id;
+        }
+        return customerCodeView;
+    }
+
+    public boolean match(CustomerCodeView customerCodeViewA, CustomerCodeView customerCodeViewB) {
+        return customerCodeViewA.customerId == customerCodeViewB.customerId
+                || customerCodeViewA.customerTagId == customerCodeViewB.customerTagId
+                || customerCodeViewA.customerAreaId == customerCodeViewB.customerAreaId
+                || customerCodeViewA.customerCategoryId == customerCodeViewB.customerCategoryId;
     }
 }

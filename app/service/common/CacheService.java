@@ -7,12 +7,10 @@ import play.cache.redis.AsyncRedisList;
 import play.cache.redis.KeyValue;
 
 import javax.inject.Inject;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class CacheService {
@@ -53,6 +51,11 @@ public class CacheService {
 
     public CompletionStage<List<Optional<String>>> getAsyncKeys(List<String> keys) {
         return asyncCache.getAll(String.class, keys);
+    }
+
+    public List<String> getAsyncListKeys(String key) throws ExecutionException, InterruptedException {
+//        List<String> list = Collections.synchronizedList(new ArrayList<String>());
+        return asyncCache.list(key, String.class).toList().toCompletableFuture().get();
     }
 
     public List<List<String>> getAsyncListKeys(List<String> keyList) {

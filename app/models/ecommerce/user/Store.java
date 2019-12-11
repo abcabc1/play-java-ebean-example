@@ -1,28 +1,36 @@
-package models.ecommerce.customer;
+package models.ecommerce.user;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
+import models.ecommerce.account.Operator;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /*
-商户地址
+商户
  */
 @Entity
 @Table
-public class StoreAddress extends BasicModel {
+public class Store extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    public Store store;
+    @OneToOne
+    public Operator operator;
 
-    @ManyToOne
-    public Address address;
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '编码'")
+    public String code;
 
-    public static final Finder<Long, StoreAddress> find = new Finder<>(StoreAddress.class, "ecommerce");
+    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT '' COMMENT '名称'")
+    public String name;
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(6) DEFAULT '' COMMENT '区域编码'")
+    public String area;
+
+    public static final Finder<Long, Store> find = new Finder<>(Store.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

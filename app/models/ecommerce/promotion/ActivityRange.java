@@ -18,8 +18,8 @@ public class ActivityRange extends BasicModel {
     @ManyToOne
     public Activity activity;
 
-    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT -1 COMMENT '用户黑白名单:[+ 白名单, - 黑名单]'")
-    public boolean rangeUserBlackWhite;
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT -1 COMMENT '客户黑白名单:[+ 白名单, - 黑名单]'")
+    public boolean rangeCustomerBlackWhite;
 
     @Column(nullable = false, columnDefinition = "TINYINT DEFAULT -1 COMMENT '商品黑白名单:[+ 白名单, - 黑名单]'")
     public boolean rangeMerchandiseBlackWhite;
@@ -28,7 +28,7 @@ public class ActivityRange extends BasicModel {
     public List<ActivityRangeMerchandise> activityRangeMerchandiseList;
 
     @OneToMany
-    public List<ActivityRangeUser> activityRangeUserList;
+    public List<ActivityRangeCustomer> activityRangeCustomerList;
 
     public static final Finder<Long, ActivityRange> find = new Finder<>(ActivityRange.class, "default");
 

@@ -1,34 +1,34 @@
 package service.ecommerce.customer;
 
-import models.ecommerce.customer.view.UserRangeView;
+import models.ecommerce.user.view.CustomerCodeView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerService {
 
-    public UserRangeView buildUserRangeView(Long userId, Long userTagId, Long userAreaId, Long userCategoryId) {
-        UserRangeView userRangeView = new UserRangeView();
-        userRangeView.userId = userId;
-        userRangeView.userTagId = userTagId;
-        userRangeView.userAreaId = userAreaId;
-        userRangeView.userCategoryId = userCategoryId;
-        return userRangeView;
+    public CustomerCodeView buildCustomerRangeView(Long customerId, Long customerTagId, Long customerAreaId, Long customerCategoryId) {
+        CustomerCodeView customerCodeView = new CustomerCodeView();
+        customerCodeView.customerId = customerId;
+        customerCodeView.customerTagId = customerTagId;
+        customerCodeView.customerAreaId = customerAreaId;
+        customerCodeView.customerCategoryId = customerCategoryId;
+        return customerCodeView;
     }
 
-    public static List<String> getUserRangeViewCodeList(UserRangeView userRangeView) {
+    public static List<String> getCustomerRangeViewCodeList(CustomerCodeView customerCodeView) {
         List<String> list = new ArrayList<>();
-        if (userRangeView.userId != null && userRangeView.userId > 0) {
-            list.add("UU" + userRangeView.userId);
+        if (customerCodeView.customerId > 0) {
+            list.add("UU" + customerCodeView.customerId);
         }
-        if (userRangeView.userTagId != null && userRangeView.userTagId > 0) {
-            list.add("UT" + userRangeView.userTagId);
+        if (customerCodeView.customerTagId > 0) {
+            list.add("UT" + customerCodeView.customerTagId);
         }
-        if (userRangeView.userAreaId != null && userRangeView.userAreaId > 0) {
-            list.add("UA" + userRangeView.userAreaId);
+        if (customerCodeView.customerAreaId > 0) {
+            list.add("UA" + customerCodeView.customerAreaId);
         }
-        if (userRangeView.userCategoryId != null && userRangeView.userCategoryId > 0) {
-            list.add("UC" + userRangeView.userCategoryId);
+        if (customerCodeView.customerCategoryId > 0) {
+            list.add("UC" + customerCodeView.customerCategoryId);
         }
         return list;
     }

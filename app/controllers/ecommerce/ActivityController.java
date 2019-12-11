@@ -1,6 +1,6 @@
 package controllers.ecommerce;
 
-import models.ecommerce.customer.User;
+import models.ecommerce.user.Customer;
 import models.ecommerce.merchandise.Merchandise;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -29,7 +29,7 @@ public class ActivityController extends Controller {
 
     public Result getActivityByRange(Http.Request request) {
         List<Merchandise> merchandiseList = RequestUtil.getRequestJsonList(request, "models", Merchandise.class);
-        List<User> userList = RequestUtil.getRequestJsonList(request, "models", User.class);
+        List<Customer> customerList = RequestUtil.getRequestJsonList(request, "models", Customer.class);
         List<String> stringList = null;//saleService.getActivityKeysByRange(merchandiseList, userList);
         return ResultUtil.success("cache", cacheService.getAsyncListKeys(stringList));
     }

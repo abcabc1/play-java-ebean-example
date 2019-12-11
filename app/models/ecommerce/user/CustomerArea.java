@@ -1,4 +1,4 @@
-package models.ecommerce.customer;
+package models.ecommerce.user;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
@@ -10,22 +10,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /*
-商户证照
+客户区域
  */
 @Entity
 @Table
-public class StoreLicense extends BasicModel {
+public class CustomerArea extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
-    public Store store;
+    public Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "license")
-    public Config license;
+    @JoinColumn(name = "area")
+    public Config area;
 
-    public static final Finder<Long, StoreLicense> find = new Finder<>(StoreLicense.class, "ecommerce");
+    public static final Finder<Long, CustomerArea> find = new Finder<>(CustomerArea.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

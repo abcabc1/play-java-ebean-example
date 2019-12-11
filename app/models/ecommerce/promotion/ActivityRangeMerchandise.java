@@ -4,7 +4,7 @@ import io.ebean.Finder;
 import models.base.BasicModel;
 import models.ecommerce.merchandise.Merchandise;
 import models.ecommerce.merchandise.MerchandiseTag;
-import models.ecommerce.sale.MerchandiseStore;
+import models.ecommerce.sale.StoreMerchandise;
 
 import javax.persistence.*;
 
@@ -20,7 +20,7 @@ public class ActivityRangeMerchandise extends BasicModel {
     @ManyToOne
     public ActivityRange activityRange;
 
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'MM' COMMENT '类别:[MM 商品, MT 标签, MC 类别]'")
+    @Column(nullable = false, columnDefinition = "CHAR(2) DEFAULT 'MM' COMMENT '类别:[MM 商品, MT 标签, MC 类别]'")
     public String merchandiseType;
 
     @ManyToOne
@@ -30,10 +30,10 @@ public class ActivityRangeMerchandise extends BasicModel {
     public MerchandiseTag merchandiseTag;
 
     @ManyToOne
-    public MerchandiseStore merchandiseStore;
+    public StoreMerchandise storeMerchandise;
 
     @Transient
-    public String code;
+    public Long merchandiseId;
 
     public static final Finder<Long, ActivityRangeMerchandise> find = new Finder<>(ActivityRangeMerchandise.class, "default");
 

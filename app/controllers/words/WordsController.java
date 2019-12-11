@@ -4,10 +4,9 @@ import models.words.*;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import service.words.ListenWordService;
-import service.words.WordEnSentenceService;
-import service.words.WordEnService;
-import service.words.WordEnExtendService;
+import service.words.en.ListenWordService;
+import service.words.en.WordEnService;
+import service.words.en.WordEnExtendService;
 import utils.http.RequestUtil;
 
 import javax.inject.Inject;
@@ -21,14 +20,12 @@ public class WordsController extends Controller {
 
     private final WordEnService wordEnService;
     private final WordEnExtendService wordEnExtendService;
-    private final WordEnSentenceService wordEnSentenceService;
     private final ListenWordService listenWordService;
 
     @Inject
-    public WordsController(WordEnService wordEnService, WordEnExtendService wordEnExtendService, WordEnSentenceService wordEnSentenceService, ListenWordService listenWordService) {
+    public WordsController(WordEnService wordEnService, WordEnExtendService wordEnExtendService, ListenWordService listenWordService) {
         this.wordEnService = wordEnService;
         this.wordEnExtendService = wordEnExtendService;
-        this.wordEnSentenceService = wordEnSentenceService;
         this.listenWordService = listenWordService;
     }
 

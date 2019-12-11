@@ -1,8 +1,9 @@
-package models.ecommerce.customer;
+package models.ecommerce.sale;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.common.Config;
+import models.ecommerce.user.Customer;
+import models.ecommerce.merchandise.Merchandise;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -10,22 +11,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /*
-客户标签
+客户商品
  */
 @Entity
 @Table
-public class UserTag extends BasicModel {
+public class CustomerMerchandise extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
-    public User user;
+    @JoinColumn(name = "customer")
+    public Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "tag")
-    public Config tag;
-
-    public static final Finder<Long, UserTag> find = new Finder<>(UserTag.class, "ecommerce");
+    @JoinColumn(name = "merchandise")
+    public Merchandise merchandise;
+    public static final Finder<Long, CustomerMerchandise> find = new Finder<>(CustomerMerchandise.class, "default");
 
 /*
     @JsonBackReference(value = "operatorPass")

@@ -1,31 +1,25 @@
-package models.ecommerce.customer;
+package models.ecommerce.user;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
-import models.ecommerce.common.Config;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /*
-商户标签
+地址
  */
 @Entity
 @Table
-public class StoreTag extends BasicModel {
+public class Address extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    public Store store;
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '' COMMENT '详细'")
+    public String detail;
 
-    @ManyToOne
-    @JoinColumn(name = "tag")
-    public Config tag;
-
-    public static final Finder<Long, StoreTag> find = new Finder<>(StoreTag.class, "ecommerce");
+    public static final Finder<Long, Address> find = new Finder<>(Address.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")

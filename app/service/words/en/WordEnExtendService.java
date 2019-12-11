@@ -1,26 +1,28 @@
-package service.words;
+package service.words.en;
 
 import com.typesafe.config.Config;
+import models.words.WordEnExtend;
 import play.cache.AsyncCacheApi;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.HttpExecutionContext;
 import play.libs.ws.WSClient;
-import repository.words.WordEnSentenceRepository;
+import repository.words.WordEnExtendRepository;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
-public class WordEnSentenceService {
+public class WordEnExtendService {
 
     protected final Config config;
     protected final AsyncCacheApi cache;
     protected final WSClient ws;
     protected final HttpExecutionContext httpExecutionContext;
     protected final MessagesApi messagesApi;
-    protected final WordEnSentenceRepository repository;
+    protected final WordEnExtendRepository repository;
 
     @Inject
-    public WordEnSentenceService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
-                                 MessagesApi messagesApi, WordEnSentenceRepository repository) {
+    public WordEnExtendService(Config config, AsyncCacheApi cache, WSClient ws, HttpExecutionContext httpExecutionContext,
+                               MessagesApi messagesApi, WordEnExtendRepository repository) {
         this.config = config;
         this.cache = cache;
         this.ws = ws;
@@ -29,5 +31,9 @@ public class WordEnSentenceService {
         this.repository = repository;
     }
 
-
+    public String get(WordEnExtend model) {
+        String rtn = "test service";
+        Optional<WordEnExtend> word = repository.get(model);
+        return rtn + " " + word.map(v -> v.pk.word).orElse("");
+    }
 }

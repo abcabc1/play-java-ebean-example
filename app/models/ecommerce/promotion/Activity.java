@@ -91,7 +91,7 @@ public class Activity extends BasicModel {
 
     private enum LabelBrief {
 
-        Merchandise("MM"), MerchandiseTag("MG"), User("UU"), UserTag("UG"), UserArea("UA"), UserType("UT");
+        Merchandise("MM"), MerchandiseTag("MG"), Customer("UU"), CustomerTag("UG"), CustomerArea("UA"), CustomerType("UT");
 
         private String value;
 

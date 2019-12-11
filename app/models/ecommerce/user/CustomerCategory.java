@@ -1,4 +1,4 @@
-package models.ecommerce.customer;
+package models.ecommerce.user;
 
 import io.ebean.Finder;
 import models.base.BasicModel;
@@ -14,18 +14,18 @@ import javax.persistence.Table;
  */
 @Entity
 @Table
-public class UserCategory extends BasicModel {
+public class CustomerCategory extends BasicModel {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
-    public User user;
+    public Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "category")
     public Config category;
 
-    public static final Finder<Long, UserCategory> find = new Finder<>(UserCategory.class, "ecommerce");
+    public static final Finder<Long, CustomerCategory> find = new Finder<>(CustomerCategory.class, "ecommerce");
 
 /*
     @JsonBackReference(value = "operatorPass")
